@@ -186,6 +186,9 @@ export const additionalTranslations = {
     'subscriptionManagement.cancelledButActive': 'Cancelled (Active until expiry)',
     'subscriptionManagement.alreadyCancelled': 'Already Cancelled',
     'subscriptionManagement.accessUntil': 'Access until',
+    'subscriptionManagement.expired': 'Expired',
+    'subscriptionManagement.expiredOn': 'Expired on',
+    'subscriptionManagement.renewSubscription': 'Renew Subscription',
     
     // Common
     'common.month': 'month',
@@ -211,6 +214,9 @@ export const additionalTranslations = {
     'subscriptionManagement.cancelledButActive': '已取消（有效至到期）',
     'subscriptionManagement.alreadyCancelled': '已取消续费',
     'subscriptionManagement.accessUntil': '可使用至',
+    'subscriptionManagement.expired': '已过期',
+    'subscriptionManagement.expiredOn': '过期于',
+    'subscriptionManagement.renewSubscription': '续费订阅',
     
     // Common
     'common.month': '月',

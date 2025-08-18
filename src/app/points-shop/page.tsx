@@ -38,7 +38,7 @@ export default function PointsShopPage() {
     if (!user) return;
 
     try {
-      // 检查订阅状态
+      // 检查订阅状态（不再限制必须有订阅才能购买积分）
       const { data: subscription } = await supabase
         .from('subscriptions')
         .select('*')
@@ -46,14 +46,7 @@ export default function PointsShopPage() {
         .eq('status', 'active')
         .single();
 
-      if (!subscription) {
-        // 没有订阅，跳转到订阅页面
-        alert(t('pointsShop.subscriptionRequired'));
-        router.push('/recharge');
-        return;
-      }
-
-      setHasSubscription(true);
+      setHasSubscription(!!subscription);
 
       // 获取当前积分
       const { data: userPoints } = await supabase

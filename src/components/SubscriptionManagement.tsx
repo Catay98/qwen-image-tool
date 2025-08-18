@@ -48,15 +48,37 @@ export default function SubscriptionManagement() {
     
     setLoading(true);
     try {
-      // 获取订阅信息
+      // 获取订阅信息（包括已过期的）
       const { data: sub } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
-        .in('status', ['active', 'cancelled'])
+        .in('status', ['active', 'cancelled', 'expired'])
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
+
+      // 检查是否已过期
+      if (sub && sub.end_date) {
+        const now = new Date();
+        const endDate = new Date(sub.end_date);
+        if (endDate < now && sub.status === 'active') {
+          // 订阅已过期但状态还是active，更新为expired
+          await supabase
+            .from('subscriptions')
+            .update({ status: 'expired' })
+            .eq('id', sub.id);
+          sub.status = 'expired';
+        }
+        
+        // 如果字段不存在，从metadata中读取
+        if (sub.cancel_at_period_end === undefined && sub.metadata?.cancel_at_period_end) {
+          sub.cancel_at_period_end = sub.metadata.cancel_at_period_end;
+        }
+        if (sub.cancelled_at === undefined && sub.metadata?.canceled_at) {
+          sub.cancelled_at = sub.metadata.canceled_at;
+        }
+      }
 
       setSubscription(sub);
 
@@ -201,7 +223,11 @@ export default function SubscriptionManagement() {
               </p>
             </div>
             <div className="flex flex-col items-end">
-              {subscription.cancel_at_period_end ? (
+              {subscription.status === 'expired' ? (
+                <span className="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">
+                  {t('subscriptionManagement.expired')}
+                </span>
+              ) : subscription.cancel_at_period_end ? (
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">
                   {t('subscriptionManagement.cancelledButActive')}
                 </span>
@@ -210,9 +236,9 @@ export default function SubscriptionManagement() {
                   {t('subscriptionManagement.active')}
                 </span>
               )}
-              {subscription.cancel_at_period_end && (
+              {(subscription.cancel_at_period_end || subscription.status === 'expired') && (
                 <p className="text-xs text-gray-500 mt-1">
-                  {t('subscriptionManagement.accessUntil')}: {formatDate(subscription.end_date)}
+                  {subscription.status === 'expired' ? t('subscriptionManagement.expiredOn') : t('subscriptionManagement.accessUntil')}: {formatDate(subscription.end_date)}
                 </p>
               )}
             </div>
@@ -221,28 +247,39 @@ export default function SubscriptionManagement() {
 
         {/* 操作按钮 */}
         <div className="flex space-x-4">
-          {upgradePlans.length > 0 && !subscription.cancel_at_period_end && (
+          {subscription.status === 'expired' ? (
             <button
-              onClick={() => setShowUpgradeModal(true)}
+              onClick={() => window.location.href = '/recharge'}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {t('subscriptionManagement.upgradePlan')}
-            </button>
-          )}
-          {!subscription.cancel_at_period_end ? (
-            <button
-              onClick={() => setShowCancelConfirm(true)}
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              {t('subscriptionManagement.cancelSubscription')}
+              {t('subscriptionManagement.renewSubscription')}
             </button>
           ) : (
-            <button
-              disabled
-              className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-            >
-              {t('subscriptionManagement.alreadyCancelled')}
-            </button>
+            <>
+              {upgradePlans.length > 0 && !subscription.cancel_at_period_end && (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {t('subscriptionManagement.upgradePlan')}
+                </button>
+              )}
+              {!subscription.cancel_at_period_end ? (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  {t('subscriptionManagement.cancelSubscription')}
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+                >
+                  {t('subscriptionManagement.alreadyCancelled')}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

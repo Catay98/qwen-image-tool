@@ -118,7 +118,7 @@ export default function ProfilePage() {
       subscription_type: sub?.plan_name || null,
       end_date: sub?.end_date || null,
       free_uses_remaining: usage?.free_uses_remaining ?? 10,
-      cancel_at_period_end: sub?.cancel_at_period_end || false,
+      cancel_at_period_end: sub?.cancel_at_period_end || sub?.metadata?.cancel_at_period_end || false,
     });
   };
 

@@ -59,23 +59,43 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 更新数据库中的订阅状态（保持active，但标记为期末取消）
+    // 先尝试更新包含新字段的版本
+    let updateData: any = {
+      status: 'active',  // 保持active状态
+      updated_at: new Date().toISOString(),
+      metadata: {
+        ...subscription.metadata,
+        canceled_at: new Date().toISOString(),
+        canceled_by: userId,
+        cancel_at_period_end: true  // 在metadata中也记录
+      }
+    };
+
+    // 尝试更新新字段
     const { error: updateError } = await supabase
       .from('subscriptions')
       .update({
-        status: 'active',  // 保持active状态
-        cancel_at_period_end: true,  // 标记为期末取消
-        cancelled_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        metadata: {
-          ...subscription.metadata,
-          canceled_at: new Date().toISOString(),
-          canceled_by: userId
-        }
+        ...updateData,
+        cancel_at_period_end: true,  // 尝试设置新字段
+        cancelled_at: new Date().toISOString()
       })
       .eq('id', subscription.id);
-
-    if (updateError) {
+    
+    // 如果新字段不存在，只更新metadata
+    if (updateError && updateError.message?.includes('cancel_at_period_end')) {
+      const { error: fallbackError } = await supabase
+        .from('subscriptions')
+        .update(updateData)
+        .eq('id', subscription.id);
+      
+      if (fallbackError) {
+        console.error('更新订阅状态失败:', fallbackError);
+        return NextResponse.json(
+          { error: '取消订阅失败' },
+          { status: 500 }
+        );
+      }
+    } else if (updateError) {
       console.error('更新订阅状态失败:', updateError);
       return NextResponse.json(
         { error: '取消订阅失败' },
