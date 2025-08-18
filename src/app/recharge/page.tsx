@@ -28,6 +28,7 @@ export default function RechargePage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [fetchingPlans, setFetchingPlans] = useState(true);
   const [hasSubscription, setHasSubscription] = useState(false);
+  const [hasCancelledSubscription, setHasCancelledSubscription] = useState(false);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
 
   useEffect(() => {
@@ -52,7 +53,20 @@ export default function RechargePage() {
         .eq('status', 'active')
         .single();
       
-      setHasSubscription(!!subscription);
+      // 如果用户已取消续费（但订阅仍有效），允许他们看到订阅选项
+      if (subscription) {
+        // 检查是否取消了续费
+        const cancelAtPeriodEnd = subscription.cancel_at_period_end || 
+                                  subscription.metadata?.cancel_at_period_end || 
+                                  false;
+        
+        // 只有当订阅是活跃的且没有取消续费时，才显示订阅管理界面
+        setHasSubscription(!!subscription && !cancelAtPeriodEnd);
+        setHasCancelledSubscription(cancelAtPeriodEnd);
+      } else {
+        setHasSubscription(false);
+        setHasCancelledSubscription(false);
+      }
     } catch (error) {
       console.error('Error checking subscription:', error);
       setHasSubscription(false);
@@ -233,9 +247,19 @@ export default function RechargePage() {
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('recharge.title')}</h1>
             <p className="text-lg text-gray-600">{t('recharge.subtitle')}</p>
-            <div className="mt-4 inline-flex items-center bg-blue-50 px-6 py-3 rounded-full">
-              <span className="text-gray-700">{t('recharge.subscriptionNote')}</span>
-            </div>
+            {hasCancelledSubscription && (
+              <div className="mt-4 inline-flex items-center bg-yellow-50 px-6 py-3 rounded-full border border-yellow-200">
+                <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-yellow-800">{t('recharge.cancelledSubscriptionNote')}</span>
+              </div>
+            )}
+            {!hasCancelledSubscription && (
+              <div className="mt-4 inline-flex items-center bg-blue-50 px-6 py-3 rounded-full">
+                <span className="text-gray-700">{t('recharge.subscriptionNote')}</span>
+              </div>
+            )}
           </div>
 
           {/* 积分套餐 */}
