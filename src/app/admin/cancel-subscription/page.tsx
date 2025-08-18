@@ -196,11 +196,35 @@ export default function AdminCancelSubscriptionPage() {
       const data = await response.json();
       
       if (response.ok) {
-        setResult({ 
-          success: true, 
-          message: `Stripe订阅取消成功！取消了 ${data.summary.subscriptions_cancelled} 个订阅`,
-          details: data
-        });
+        // 处理没有summary的情况
+        if (!data.summary) {
+          setResult({ 
+            success: false, 
+            message: '操作完成但未返回预期数据',
+            details: data
+          });
+        } else {
+          const cancelledCount = data.summary.subscriptions_cancelled || 0;
+          const foundCount = data.summary.subscriptions_found || 0;
+          const customersCount = data.summary.customers_found || 0;
+          
+          let message = '';
+          if (cancelledCount > 0) {
+            message = `✅ Stripe订阅取消成功！取消了 ${cancelledCount} 个订阅`;
+          } else if (foundCount > 0) {
+            message = '📋 找到订阅但已经是取消状态';
+          } else if (customersCount > 0) {
+            message = '👤 找到客户但没有活跃订阅';
+          } else {
+            message = '❌ 该邮箱在Stripe中没有找到任何客户或订阅';
+          }
+          
+          setResult({ 
+            success: cancelledCount > 0 || foundCount === 0, 
+            message: message,
+            details: data
+          });
+        }
         
         // 如果用户已查询，重新查询信息
         if (userInfo) {

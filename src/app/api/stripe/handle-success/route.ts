@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2024-12-18.acacia' as any,
 });
 
 export async function POST(request: NextRequest) {
@@ -577,7 +577,7 @@ async function handleSubscriptionUpgrade(params: {
       if (oldSub?.stripe_subscription_id) {
         try {
           const stripe = new Stripe(stripeSecretKey, {
-            apiVersion: '2024-12-18.acacia',
+            apiVersion: '2024-12-18.acacia' as any,
           });
           await stripe.subscriptions.cancel(oldSub.stripe_subscription_id);
         } catch (error) {

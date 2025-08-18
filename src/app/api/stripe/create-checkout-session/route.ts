@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
 
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2024-12-18.acacia' as any,
 });
 
 export async function POST(request: NextRequest) {
@@ -160,7 +160,8 @@ export async function POST(request: NextRequest) {
         },
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
-        customer_email: userData?.email || undefined,
+        // 不传递customer_email以避免"您已订阅我们的服务"错误
+        // customer_email: userData?.email || undefined,
       };
       
       session = await stripe.checkout.sessions.create(sessionOptions);
@@ -191,7 +192,8 @@ export async function POST(request: NextRequest) {
           planName: plan.name,
           points: points.toString()
         },
-        customer_email: userData?.email || undefined,
+        // 不传递customer_email以避免"您已订阅我们的服务"错误
+        // customer_email: userData?.email || undefined,
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
       });

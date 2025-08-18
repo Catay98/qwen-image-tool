@@ -68,6 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         console.log('Subscription expiry check:', data);
+      } else if (response.status === 401) {
+        // 忽略401错误，这可能是因为token还未完全准备好
+        console.log('Subscription check skipped - auth not ready');
       }
     } catch (error) {
       console.error('Error checking subscription expiry:', error);
