@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 检查用户是否有订阅
+    // 检查用户是否有有效订阅（未过期）
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('*')
@@ -34,6 +34,23 @@ export async function POST(request: NextRequest) {
     if (!subscription) {
       return NextResponse.json(
         { error: '您需要先订阅才能购买积分包' },
+        { status: 403 }
+      );
+    }
+
+    // 检查订阅是否已过期
+    const now = new Date();
+    const endDate = new Date(subscription.end_date);
+    
+    if (endDate < now) {
+      // 订阅已过期，更新状态
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'expired' })
+        .eq('id', subscription.id);
+      
+      return NextResponse.json(
+        { error: '订阅已过期，请续费后才能购买积分包' },
         { status: 403 }
       );
     }

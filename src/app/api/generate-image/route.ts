@@ -137,6 +137,54 @@ export async function POST(request: Request) {
       );
     }
 
+    // 检查订阅状态并清理过期积分
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .single();
+    
+    if (subscription) {
+      const now = new Date();
+      const endDate = new Date(subscription.end_date);
+      
+      if (endDate < now) {
+        // 订阅已过期，清零积分
+        await supabase
+          .from('subscriptions')
+          .update({ status: 'expired' })
+          .eq('id', subscription.id);
+        
+        // 清零用户积分
+        const { data: userPoints } = await supabase
+          .from('user_points')
+          .select('available_points')
+          .eq('user_id', userId)
+          .single();
+        
+        if (userPoints && userPoints.available_points > 0) {
+          await supabase
+            .from('user_points')
+            .update({
+              available_points: 0,
+              expired_points: (userPoints.expired_points || 0) + userPoints.available_points,
+              updated_at: new Date().toISOString()
+            })
+            .eq('user_id', userId);
+        }
+        
+        return NextResponse.json(
+          { 
+            error: "订阅已过期，请续费后继续使用",
+            needSubscription: true,
+            subscriptionExpired: true
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     // 调用积分消耗函数（每次生成消耗10积分）
     const { data, error: consumeError } = await supabase
       .rpc('consume_user_points', {

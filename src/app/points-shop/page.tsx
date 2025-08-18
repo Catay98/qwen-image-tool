@@ -38,7 +38,7 @@ export default function PointsShopPage() {
     if (!user) return;
 
     try {
-      // 检查订阅状态（不再限制必须有订阅才能购买积分）
+      // 检查订阅状态 - 必须有有效订阅才能购买积分
       const { data: subscription } = await supabase
         .from('subscriptions')
         .select('*')
@@ -46,7 +46,30 @@ export default function PointsShopPage() {
         .eq('status', 'active')
         .single();
 
-      setHasSubscription(!!subscription);
+      // 检查订阅是否真的有效（未过期）
+      let hasValidSubscription = false;
+      if (subscription) {
+        const now = new Date();
+        const endDate = new Date(subscription.end_date);
+        hasValidSubscription = endDate > now;
+        
+        // 如果订阅已过期，更新状态
+        if (!hasValidSubscription) {
+          await supabase
+            .from('subscriptions')
+            .update({ status: 'expired' })
+            .eq('id', subscription.id);
+        }
+      }
+
+      if (!hasValidSubscription) {
+        // 没有有效订阅，跳转到订阅页面
+        alert(t('pointsShop.subscriptionRequired'));
+        router.push('/recharge');
+        return;
+      }
+
+      setHasSubscription(true);
 
       // 获取当前积分
       const { data: userPoints } = await supabase
