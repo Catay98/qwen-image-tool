@@ -1,0 +1,129 @@
+{
+  "nav": {
+    "home": "Home",
+    "generator": "Create",
+    "pricing": "Pricing",
+    "pointsShop": "Points",
+    "gallery": "Gallery",
+    "login": "Login",
+    "loginWithGoogle": "Sign in with Google",
+    "freeUses": "Free Uses",
+    "points": "Points",
+    "history": "History"
+  },
+  "hero": {
+    "badge": "Powered by Advanced Qwen Image AI Technology",
+    "title1": "Create Stunning Art with Qwen Image",
+    "title2": "AI Image Generator",
+    "description": "Experience the revolutionary Qwen Image AI technology - Create breathtaking images with Qwen Image in seconds. Join millions using Qwen Image for professional AI art generation.",
+    "startCreating": "Start Creating",
+    "viewPricing": "View Pricing",
+    "viewGallery": "View Gallery",
+    "stat1": "Images Created",
+    "stat2": "Active Users",
+    "stat3": "User Rating"
+  },
+  "generator": {
+    "title": "Qwen Image Generator",
+    "subtitle": "Transform your ideas into stunning visuals with Qwen Image",
+    "placeholder": "Describe your image...",
+    "generateButton": "Generate Image",
+    "generating": "Creating your masterpiece...",
+    "download": "Download",
+    "share": "Share",
+    "welcomeBack": "Welcome back"
+  },
+  "features": {
+    "sectionTitle": "Why Choose Qwen Image AI?",
+    "sectionSubtitle": "Qwen Image offers powerful features for all your creative needs",
+    "ctaText": "Ready to unleash your creativity?",
+    "ctaButton": "Start Creating Now"
+  },
+  "showcase": {
+    "title": "Qwen Image AI Gallery",
+    "subtitle": "Explore amazing Qwen Image creations from our community",
+    "loadMore": "Load More Creations",
+    "details": "Creation Details",
+    "prompt": "Prompt",
+    "category": "Category",
+    "style": "Style",
+    "usePrompt": "Use This Prompt",
+    "categories": {
+      "all": "All",
+      "portrait": "Portrait",
+      "fantasy": "Fantasy",
+      "scifi": "Sci-Fi",
+      "nature": "Nature",
+      "steampunk": "Steampunk",
+      "abstract": "Abstract",
+      "retro": "Retro",
+      "artNouveau": "Art Nouveau"
+    },
+    "styles": {
+      "photorealistic": "Photorealistic",
+      "digitalArt": "Digital Art",
+      "conceptArt": "Concept Art",
+      "anime": "Anime",
+      "photography": "Photography",
+      "3dRender": "3D Render",
+      "illustration": "Illustration",
+      "minimalist": "Minimalist",
+      "vintageSciFi": "Vintage Sci-Fi"
+    },
+    "prompts": {
+      "1": "Elegant oriental woman in delicate Hanfu, plum blossoms blooming, classical courtyard deep, showcasing gentle oriental charm",
+      "2": "Colorful ice crystal phoenix soaring, aurora shining over snowy peaks, mythical creature meets natural wonder",
+      "3": "Cyberpunk style ancient city street, neon signs and traditional architecture blend, future oriental metropolis in rainy night",
+      "4": "Magical forest fairy wonderland, glowing mushrooms in the woods, fairies dancing over streams, fairytale fantasy scene",
+      "5": "Intricate steampunk mechanical dragon, brass gears and copper pipes artwork, Victorian era mechanical aesthetics",
+      "6": "Jiangnan garden at sunset, pavilions reflected in lotus pond, lotus leaves abundant, poetic classical garden",
+      "7": "Astronaut at space station viewport, gazing at magnificent Earth and brilliant galaxy, perfect fusion of technology and cosmos",
+      "8": "Art Nouveau oriental lady portrait, blending traditional ink painting with Western decorative art, golden texture accents",
+      "9": "Deep sea dragon palace, coral palace with glowing marine life swimming, mysterious underwater civilization revealed",
+      "10": "Modern abstract art, flowing colors colliding with geometric shapes, showcasing digital age artistic beauty",
+      "11": "Ancient female general in exquisite armor, holding spear on city wall, showing heroic feminine spirit",
+      "12": "Retro-futuristic space diner, 50s American style meets alien technology, filled with nostalgic charm"
+    }
+  },
+  "footer": {
+    "product": "Product",
+    "company": "Company",
+    "resources": "Resources",
+    "legal": "Legal",
+    "home": "Home",
+    "pricing": "Pricing",
+    "aboutUs": "About Us",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "documentation": "Documentation",
+    "apiReference": "API Reference",
+    "support": "Support",
+    "community": "Community",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "refund": "Refund Policy",
+    "copyright": "© 2024 Qwen Image. All rights reserved."
+  },
+  "pricing": {
+    "title": "Choose Your Qwen Image Plan",
+    "subtitle": "Flexible Qwen Image pricing for everyone",
+    "subscriptions": "Subscriptions",
+    "pointsPackages": "Points Packages",
+    "faq": "Frequently Asked Questions",
+    "getStarted": "Get Started"
+  },
+  "history": {
+    "title": "Generation History",
+    "clear": "Clear History"
+  },
+  "share": {
+    "shareText": "Check out this amazing Qwen Image creation"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  }
+}

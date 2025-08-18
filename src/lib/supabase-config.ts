@@ -1,0 +1,3 @@
+// Supabase配置
+export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://edcsfjswoplnrqrirrwm.supabase.co';
+export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkY3NmanN3b3BsbnJxcmlycndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ5MDMxNTgsImV4cCI6MjA3MDQ3OTE1OH0.g_8Hbu0KCXV_BYMHS4q3XH53ZX90JodDKvNcto0_GEQ';

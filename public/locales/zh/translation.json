@@ -1,0 +1,129 @@
+{
+  "nav": {
+    "home": "首页",
+    "generator": "创作",
+    "pricing": "价格",
+    "pointsShop": "积分",
+    "gallery": "图库",
+    "login": "登录",
+    "loginWithGoogle": "使用 Google 登录",
+    "freeUses": "免费次数",
+    "points": "积分",
+    "history": "历史记录"
+  },
+  "hero": {
+    "badge": "由先进的 Qwen Image AI 技术驱动",
+    "title1": "使用 Qwen Image 创作惊艳艺术",
+    "title2": "AI 图像生成器",
+    "description": "体验革命性的 Qwen Image AI 技术 - 使用 Qwen Image 在几秒钟内创建令人惊叹的图像。加入数百万使用 Qwen Image 进行专业 AI 艺术创作的用户。",
+    "startCreating": "开始创作",
+    "viewPricing": "查看价格",
+    "viewGallery": "查看图库",
+    "stat1": "生成图像",
+    "stat2": "活跃用户",
+    "stat3": "用户评分"
+  },
+  "generator": {
+    "title": "Qwen Image 生成器",
+    "subtitle": "使用 Qwen Image 将您的想法转化为惊艳的视觉效果",
+    "placeholder": "描述您的图像...",
+    "generateButton": "生成图像",
+    "generating": "正在创作您的杰作...",
+    "download": "下载",
+    "share": "分享",
+    "welcomeBack": "欢迎回来"
+  },
+  "features": {
+    "sectionTitle": "为什么选择 Qwen Image AI？",
+    "sectionSubtitle": "Qwen Image 提供满足您所有创意需求的强大功能",
+    "ctaText": "准备好释放您的创造力了吗？",
+    "ctaButton": "立即开始创作"
+  },
+  "showcase": {
+    "title": "Qwen Image AI 图库",
+    "subtitle": "探索社区的精彩 Qwen Image 创作",
+    "loadMore": "加载更多作品",
+    "details": "作品详情",
+    "prompt": "提示词",
+    "category": "分类",
+    "style": "风格",
+    "usePrompt": "使用此提示词",
+    "categories": {
+      "all": "全部",
+      "portrait": "人像",
+      "fantasy": "奇幻",
+      "scifi": "科幻",
+      "nature": "自然",
+      "steampunk": "蒸汽朋克",
+      "abstract": "抽象",
+      "retro": "复古",
+      "artNouveau": "新艺术"
+    },
+    "styles": {
+      "photorealistic": "写实",
+      "digitalArt": "数字艺术",
+      "conceptArt": "概念艺术",
+      "anime": "动漫",
+      "photography": "摄影",
+      "3dRender": "3D渲染",
+      "illustration": "插画",
+      "minimalist": "极简主义",
+      "vintageSciFi": "复古科幻"
+    },
+    "prompts": {
+      "1": "身着淡雅汉服的东方女子，梅花枝头春意盎然，古典庭院深深，展现温婉优雅的东方韵味",
+      "2": "七彩冰晶凤凰展翅翱翔，极光璀璨映照雪山之巅，神话生物与自然奇观的完美融合",
+      "3": "赛博朋克风格古城街道，霓虹招牌与传统建筑交相辉映，雨夜中的未来东方都市",
+      "4": "梦幻森林中的精灵仙境，发光蘑菇点缀林间，小精灵在溪流上翩翩起舞，童话世界般的奇幻场景",
+      "5": "精密的蒸汽朋克机械龙，黄铜齿轮和铜管构成的艺术品，维多利亚时代的机械美学",
+      "6": "江南园林夕阳西下，亭台水榭倒映荷塘，荷叶田田，古典园林的诗意画卷",
+      "7": "太空站的观景窗前，宇航员凝望着壮丽的地球和璀璨的银河，科技与宇宙的完美结合",
+      "8": "新艺术风格的东方仕女图，融合了传统水墨画与西方装饰艺术，金色纹理点缀其间",
+      "9": "深海龙宫，珊瑚宫殿中游弋着发光的海洋生物，神秘的海底文明展现眼前",
+      "10": "现代抽象艺术，流动的色彩与几何图形的碰撞，展现数字时代的艺术美感",
+      "11": "古代女将军身着精美战甲，手持长枪立于城墙之上，展现巾帼不让须眉的英姿",
+      "12": "复古未来主义的太空餐厅，50年代美式风格与外星科技的奇妙组合，充满怀旧情怀"
+    }
+  },
+  "footer": {
+    "product": "产品",
+    "company": "公司",
+    "resources": "资源",
+    "legal": "法律",
+    "home": "首页",
+    "pricing": "价格",
+    "aboutUs": "关于我们",
+    "blog": "博客",
+    "careers": "招聘",
+    "contact": "联系我们",
+    "documentation": "文档",
+    "apiReference": "API 参考",
+    "support": "支持",
+    "community": "社区",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "cookies": "Cookie 政策",
+    "refund": "退款政策",
+    "copyright": "© 2024 Qwen Image. 保留所有权利。"
+  },
+  "pricing": {
+    "title": "选择您的 Qwen Image 套餐",
+    "subtitle": "灵活的 Qwen Image 定价适合每个人",
+    "subscriptions": "订阅套餐",
+    "pointsPackages": "积分套餐",
+    "faq": "常见问题",
+    "getStarted": "开始使用"
+  },
+  "history": {
+    "title": "生成历史",
+    "clear": "清除历史"
+  },
+  "share": {
+    "shareText": "看看这个惊艳的 Qwen Image 创作"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功"
+  }
+}
