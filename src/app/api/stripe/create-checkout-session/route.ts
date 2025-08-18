@@ -76,6 +76,39 @@ export async function POST(request: NextRequest) {
       .eq('id', userId)
       .single();
 
+    // 检查用户是否已有Stripe客户ID
+    let stripeCustomerId = null;
+    
+    // 获取用户的现有订阅，看是否有stripe_customer_id
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('stripe_customer_id')
+      .eq('user_id', userId)
+      .not('stripe_customer_id', 'is', null)
+      .limit(1)
+      .single();
+    
+    if (existingSubscription?.stripe_customer_id) {
+      stripeCustomerId = existingSubscription.stripe_customer_id;
+      
+      // 检查该客户是否有活跃订阅
+      try {
+        const subscriptions = await stripe.subscriptions.list({
+          customer: stripeCustomerId,
+          status: 'active',
+          limit: 1
+        });
+        
+        // 如果有活跃订阅，创建新客户
+        if (subscriptions.data.length > 0) {
+          console.log('Customer has active subscription, creating new customer');
+          stripeCustomerId = null; // 强制创建新客户
+        }
+      } catch (error) {
+        console.error('Error checking existing subscriptions:', error);
+      }
+    }
+
     // 判断是订阅还是一次性支付
     // 根据duration_type判断：month/year 是订阅，其他是一次性支付
     const isSubscription = plan.duration_type === 'month' || plan.duration_type === 'year';
@@ -105,7 +138,7 @@ export async function POST(request: NextRequest) {
         }
       };
       
-      session = await stripe.checkout.sessions.create({
+      const sessionOptions: any = {
         payment_method_types: ['card'],
         line_items: [
           {
@@ -122,12 +155,15 @@ export async function POST(request: NextRequest) {
           planId: plan.id,
           planName: plan.name,
           points: points.toString(),
-          billingPeriod: plan.duration_type
+          billingPeriod: plan.duration_type,
+          userEmail: userData?.email || '' // 在metadata中保存邮箱，但不传给Stripe
         },
-        customer_email: userData?.email || undefined,
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
-      });
+        customer_email: userData?.email || undefined,
+      };
+      
+      session = await stripe.checkout.sessions.create(sessionOptions);
     } else {
       // 一次性支付模式（积分包）
       session = await stripe.checkout.sessions.create({

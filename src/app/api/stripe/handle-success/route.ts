@@ -254,39 +254,57 @@ async function handleSubscriptionCreation(params: {
   const { userId, planId, planName, points, billingPeriod, amount, sessionId, stripeCustomerId, stripeSubscriptionId } = params;
 
   try {
-    // 计算订阅结束日期
-    const startDate = new Date();
-    const endDate = new Date();
+    // 先检查是否已有订阅（包括已取消但仍有效的）
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .in('status', ['active', 'cancelled'])
+      .order('end_date', { ascending: false })
+      .limit(1)
+      .single();
+
+    // 计算订阅开始和结束日期
+    let startDate = new Date();
+    let endDate = new Date();
+    
+    if (existingSubscription) {
+      // 如果有现有订阅，从现有订阅的结束日期开始累加
+      const existingEndDate = new Date(existingSubscription.end_date);
+      // 如果现有订阅还没过期，从它的结束日期开始；否则从今天开始
+      startDate = existingEndDate > new Date() ? existingEndDate : new Date();
+      endDate = new Date(startDate);
+    }
+    
+    // 根据订阅周期累加时间
     if (billingPeriod === 'month') {
       endDate.setMonth(endDate.getMonth() + 1);
     } else if (billingPeriod === 'year') {
       endDate.setFullYear(endDate.getFullYear() + 1);
     }
 
-    // 先检查是否已有活跃订阅
-    const { data: existingSubscription } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .single();
-
     if (existingSubscription) {
-      // 如果有活跃订阅，更新它
+      // 如果有现有订阅，更新它（续费）
       const { error: updateError } = await supabase
         .from('subscriptions')
         .update({
           plan_id: planId,
           plan_name: planName,
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString(),
+          status: 'active',  // 重新激活订阅
+          end_date: endDate.toISOString(),  // 更新到期时间（累加）
           stripe_subscription_id: stripeSubscriptionId,
           stripe_customer_id: stripeCustomerId,
+          cancel_at_period_end: false,  // 清除取消标记
+          cancelled_at: null,  // 清除取消时间
           updated_at: new Date().toISOString(),
           metadata: {
-            session_id: sessionId,
+            ...existingSubscription.metadata,
+            renewed_at: new Date().toISOString(),
+            renewal_session_id: sessionId,
             points_granted: points,
-            billing_period: billingPeriod
+            billing_period: billingPeriod,
+            stripe_cancelled: false,  // 清除Stripe取消标记
+            cancel_at_period_end: false
           }
         })
         .eq('id', existingSubscription.id);

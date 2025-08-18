@@ -19,7 +19,7 @@ interface Plan {
 }
 
 export default function RechargePage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,9 @@ export default function RechargePage() {
   const [checkingSubscription, setCheckingSubscription] = useState(true);
 
   useEffect(() => {
+    // 等待auth加载完成
+    if (authLoading) return;
+    
     if (!user) {
       router.push('/');
       return;
@@ -39,7 +42,7 @@ export default function RechargePage() {
     checkUserSubscription();
     fetchUserPoints();
     fetchPlans();
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   const checkUserSubscription = async () => {
     if (!user) return;
@@ -55,14 +58,20 @@ export default function RechargePage() {
       
       // 如果用户已取消续费（但订阅仍有效），允许他们看到订阅选项
       if (subscription) {
-        // 检查是否取消了续费
+        // 检查是否取消了续费或Stripe已取消
         const cancelAtPeriodEnd = subscription.cancel_at_period_end || 
                                   subscription.metadata?.cancel_at_period_end || 
                                   false;
+        const stripeCancelled = subscription.metadata?.stripe_cancelled || false;
         
-        // 只有当订阅是活跃的且没有取消续费时，才显示订阅管理界面
-        setHasSubscription(!!subscription && !cancelAtPeriodEnd);
-        setHasCancelledSubscription(cancelAtPeriodEnd);
+        // 如果Stripe已取消或设置了期末取消，显示订阅选项让用户可以重新订阅
+        if (stripeCancelled || cancelAtPeriodEnd) {
+          setHasSubscription(false);  // 显示订阅选项
+          setHasCancelledSubscription(true);  // 显示已取消提示
+        } else {
+          setHasSubscription(true);  // 显示订阅管理
+          setHasCancelledSubscription(false);
+        }
       } else {
         setHasSubscription(false);
         setHasCancelledSubscription(false);
@@ -205,6 +214,21 @@ export default function RechargePage() {
     const savings = basePrice - plan.price;
     return Math.max(0, Math.floor(savings));
   };
+
+  // 如果认证还在加载，显示加载界面
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <NavBar />
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">{t('common.loading')}</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (!user) {
     return null;

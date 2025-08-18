@@ -38,6 +38,28 @@ export default function PointsShopPage() {
     if (!user) return;
 
     try {
+      // 先检查订阅是否过期并清理积分
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        const response = await fetch('/api/subscription/check-expiry', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.expired) {
+            // 订阅已过期，直接跳转
+            alert(t('pointsShop.subscriptionRequired'));
+            router.push('/recharge');
+            return;
+          }
+        }
+      }
+
       // 检查订阅状态 - 必须有有效订阅才能购买积分
       const { data: subscription } = await supabase
         .from('subscriptions')

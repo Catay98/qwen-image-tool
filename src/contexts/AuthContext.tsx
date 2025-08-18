@@ -30,9 +30,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
       
-      // 如果有用户，保存到数据库
+      // 如果有用户，保存到数据库并检查订阅过期
       if (session?.user) {
         saveUserToDatabase(session.user);
+        if (session.access_token) {
+          checkSubscriptionExpiry(session.access_token);
+        }
       }
     });
 
@@ -40,14 +43,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       
-      // 如果有用户，保存到数据库
+      // 如果有用户，保存到数据库并检查订阅过期
       if (session?.user) {
         saveUserToDatabase(session.user);
+        if (session.access_token) {
+          checkSubscriptionExpiry(session.access_token);
+        }
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkSubscriptionExpiry = async (token: string) => {
+    try {
+      const response = await fetch('/api/subscription/check-expiry', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Subscription expiry check:', data);
+      }
+    } catch (error) {
+      console.error('Error checking subscription expiry:', error);
+    }
+  };
 
   const saveUserToDatabase = async (user: User) => {
     try {

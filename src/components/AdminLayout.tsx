@@ -28,6 +28,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { path: "/admin/plans", label: "套餐管理", icon: "📦" },
     { path: "/admin/billing", label: "账单管理", icon: "💰" },
     { path: "/admin/subscriptions", label: "订阅管理", icon: "💳" },
+    { path: "/admin/cancel-subscription", label: "取消订阅", icon: "🚫" },
     { path: "/admin/usage", label: "使用统计", icon: "📈" },
     { path: "/admin/settings", label: "系统设置", icon: "⚙️" },
   ];

@@ -21,16 +21,30 @@ export async function POST(request: NextRequest) {
 
     const token = authHeader.replace('Bearer ', '');
     
-    // 验证用户
-    const { data: userData, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !userData.user) {
-      return NextResponse.json(
-        { error: '认证失败' },
-        { status: 401 }
-      );
+    // 检查是否是管理员操作
+    const isAdminOverride = request.headers.get('x-admin-override') === 'true';
+    const targetUserId = request.headers.get('x-target-user');
+    
+    let userId: string;
+    
+    if (isAdminOverride && targetUserId) {
+      // 管理员操作，使用目标用户ID
+      userId = targetUserId;
+    } else {
+      // 普通用户操作，验证token
+      const { data: userData, error: authError } = await supabase.auth.getUser(token);
+      if (authError || !userData.user) {
+        return NextResponse.json(
+          { error: '认证失败' },
+          { status: 401 }
+        );
+      }
+      userId = userData.user.id;
     }
-
-    const userId = userData.user.id;
+    
+    // 获取请求体中的选项（可选）
+    const body = await request.json().catch(() => ({}));
+    const immediateCancel = body.immediateCancel || false;
 
     // 获取用户当前的订阅
     const { data: subscription, error: subError } = await supabase
@@ -47,27 +61,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 如果有Stripe订阅ID，设置为期末取消（不立即取消）
+    // 如果有Stripe订阅ID，立即取消Stripe订阅（避免"您已订阅"问题）
+    // 但在系统内保持访问权限直到到期
+    let stripeSuccess = false;
     if (subscription.stripe_subscription_id && stripeSecretKey) {
       try {
-        await stripe.subscriptions.update(subscription.stripe_subscription_id, {
-          cancel_at_period_end: true
-        });
-      } catch (stripeError) {
+        // 总是立即取消Stripe订阅，这样用户可以重新订阅
+        // 但在我们的系统中，保持订阅有效直到end_date
+        console.log('正在取消Stripe订阅:', subscription.stripe_subscription_id);
+        await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+        stripeSuccess = true;
+        console.log('Stripe订阅已成功取消');
+      } catch (stripeError: any) {
         console.error('Stripe取消订阅失败:', stripeError);
-        // 即使Stripe取消失败，也继续处理本地数据库
+        // 如果订阅已经被取消或不存在，视为成功
+        if (stripeError.code === 'resource_missing' || 
+            stripeError.message?.includes('No such subscription') ||
+            stripeError.message?.includes('already been canceled')) {
+          stripeSuccess = true;
+          console.log('Stripe订阅已经被取消或不存在');
+        }
       }
     }
 
-    // 先尝试更新包含新字段的版本
+    // 准备更新数据
+    // 在系统中保持active状态直到end_date，这样用户可以继续使用
     let updateData: any = {
-      status: 'active',  // 保持active状态
+      status: 'active',  // 保持active状态，让用户继续使用直到到期
       updated_at: new Date().toISOString(),
       metadata: {
         ...subscription.metadata,
         canceled_at: new Date().toISOString(),
         canceled_by: userId,
-        cancel_at_period_end: true  // 在metadata中也记录
+        cancel_at_period_end: true,  // 标记为期末取消
+        stripe_cancelled: true,  // 标记Stripe已取消
+        stripe_cancel_success: stripeSuccess
       }
     };
 

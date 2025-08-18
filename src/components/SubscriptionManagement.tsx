@@ -273,10 +273,10 @@ export default function SubscriptionManagement() {
                 </button>
               ) : (
                 <button
-                  disabled
-                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+                  onClick={() => window.location.href = '/recharge'}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
-                  {t('subscriptionManagement.alreadyCancelled')}
+                  {t('subscriptionManagement.resubscribe')}
                 </button>
               )}
             </>

@@ -93,8 +93,38 @@ export default function ProfilePage() {
     }
   };
 
+  const checkAndUpdateExpiredSubscription = async () => {
+    if (!user) return;
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        const response = await fetch('/api/subscription/check-expiry', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.expired) {
+            // 订阅已过期，刷新积分显示
+            await fetchPoints();
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking subscription expiry:', error);
+    }
+  };
+
   const fetchSubscription = async () => {
     if (!user) return;
+
+    // 先检查订阅是否过期
+    await checkAndUpdateExpiredSubscription();
 
     // 获取订阅信息
     const { data: sub } = await supabase
