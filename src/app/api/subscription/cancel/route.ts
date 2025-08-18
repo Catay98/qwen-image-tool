@@ -47,21 +47,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 如果有Stripe订阅ID，取消Stripe订阅
-    if (subscription.stripe_subscription_id) {
+    // 如果有Stripe订阅ID，设置为期末取消（不立即取消）
+    if (subscription.stripe_subscription_id && stripeSecretKey) {
       try {
-        await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+        await stripe.subscriptions.update(subscription.stripe_subscription_id, {
+          cancel_at_period_end: true
+        });
       } catch (stripeError) {
         console.error('Stripe取消订阅失败:', stripeError);
         // 即使Stripe取消失败，也继续处理本地数据库
       }
     }
 
-    // 更新数据库中的订阅状态
+    // 更新数据库中的订阅状态（保持active，但标记为期末取消）
     const { error: updateError } = await supabase
       .from('subscriptions')
       .update({
-        status: 'canceled',
+        status: 'active',  // 保持active状态
+        cancel_at_period_end: true,  // 标记为期末取消
+        cancelled_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         metadata: {
           ...subscription.metadata,
@@ -100,8 +104,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '订阅已成功取消',
-      canceledAt: new Date().toISOString()
+      message: '自动续费已取消，您可以继续使用订阅直到到期日',
+      canceledAt: new Date().toISOString(),
+      expiresAt: subscription.end_date
     });
 
   } catch (error) {

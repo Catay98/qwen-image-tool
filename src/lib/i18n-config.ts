@@ -24,6 +24,8 @@ const resources = {
       'nav.loggingIn': 'Logging in...',
       'nav.loggingOut': 'Logging out...',
       'nav.subscribe': 'Subscribe',
+      'nav.title': 'Qwen Image',
+      'nav.recharge': 'Recharge',
       'nav.profile': 'Profile',
       'nav.billing': 'Billing',
       'nav.usage': 'Usage',
@@ -122,6 +124,10 @@ const resources = {
       
       // Share
       'share.shareText': 'Check out this amazing Qwen Image creation',
+      'share.title': 'Share',
+      'share.copyLink': 'Copy Link',
+      'share.cancel': 'Cancel',
+      'success.linkCopied': 'Link Copied!',
       
       // Common
       'common.loading': 'Loading...',
@@ -176,6 +182,8 @@ const resources = {
       'nav.loggingIn': '登录中...',
       'nav.loggingOut': '退出中...',
       'nav.subscribe': '订阅',
+      'nav.title': 'Qwen Image',
+      'nav.recharge': '充值',
       'nav.profile': '个人资料',
       'nav.billing': '账单',
       'nav.usage': '使用记录',
@@ -274,6 +282,10 @@ const resources = {
       
       // 分享
       'share.shareText': '看看这个惊艳的 Qwen Image 创作',
+      'share.title': '分享',
+      'share.copyLink': '复制链接',
+      'share.cancel': '取消',
+      'success.linkCopied': '链接已复制！',
       
       // 通用
       'common.loading': '加载中...',

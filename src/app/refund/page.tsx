@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 
 export default function RefundPage() {
   const { t } = useTranslation();
-  const lastUpdated = '2024-01-01';
+  const lastUpdated = '2025-04-22';
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -112,10 +112,7 @@ export default function RefundPage() {
                 {t('refund.contactDesc')}
               </p>
               <p className="text-gray-700 dark:text-gray-300 mt-2">
-                {t('refund.contactEmail')}: refund@aiqwen.cc
-              </p>
-              <p className="text-gray-700 dark:text-gray-300 mt-2">
-                {t('refund.contactInfo')}
+                {t('refund.contactEmail')}: {t('refund.contactInfo')}
               </p>
             </section>
           </div>

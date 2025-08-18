@@ -12,6 +12,8 @@ interface SubscriptionInfo {
   start_date: string;
   end_date: string;
   stripe_subscription_id?: string;
+  cancel_at_period_end?: boolean;
+  cancelled_at?: string;
 }
 
 interface UpgradePlan {
@@ -51,7 +53,9 @@ export default function SubscriptionManagement() {
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('status', 'active')
+        .in('status', ['active', 'cancelled'])
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
       setSubscription(sub);
@@ -101,11 +105,10 @@ export default function SubscriptionManagement() {
       const data = await response.json();
       
       if (response.ok) {
-        alert(t('common.subscriptionCancelled'));
-        setSubscription(null);
+        alert(t('subscriptionManagement.cancelSuccess'));
         setShowCancelConfirm(false);
-        // 刷新页面以更新状态
-        window.location.reload();
+        // 更新订阅状态而不是删除
+        await fetchSubscriptionInfo();
       } else {
         alert(data.error || t('common.cancelFailed'));
       }
@@ -197,17 +200,28 @@ export default function SubscriptionManagement() {
                 {t('subscriptionManagement.endDate')}: {formatDate(subscription.end_date)}
               </p>
             </div>
-            <div className="flex items-center">
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
-                {subscription.status === 'active' ? t('subscriptionManagement.active') : subscription.status}
-              </span>
+            <div className="flex flex-col items-end">
+              {subscription.cancel_at_period_end ? (
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">
+                  {t('subscriptionManagement.cancelledButActive')}
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                  {t('subscriptionManagement.active')}
+                </span>
+              )}
+              {subscription.cancel_at_period_end && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('subscriptionManagement.accessUntil')}: {formatDate(subscription.end_date)}
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* 操作按钮 */}
         <div className="flex space-x-4">
-          {upgradePlans.length > 0 && (
+          {upgradePlans.length > 0 && !subscription.cancel_at_period_end && (
             <button
               onClick={() => setShowUpgradeModal(true)}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -215,12 +229,21 @@ export default function SubscriptionManagement() {
               {t('subscriptionManagement.upgradePlan')}
             </button>
           )}
-          <button
-            onClick={() => setShowCancelConfirm(true)}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            {t('subscriptionManagement.cancelSubscription')}
-          </button>
+          {!subscription.cancel_at_period_end ? (
+            <button
+              onClick={() => setShowCancelConfirm(true)}
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              {t('subscriptionManagement.cancelSubscription')}
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+            >
+              {t('subscriptionManagement.alreadyCancelled')}
+            </button>
+          )}
         </div>
       </div>
 

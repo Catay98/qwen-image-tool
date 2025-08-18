@@ -18,6 +18,7 @@ interface SubscriptionInfo {
   subscription_type: string | null;
   end_date: string | null;
   free_uses_remaining: number;
+  cancel_at_period_end?: boolean;
 }
 
 interface PointsInfo {
@@ -117,6 +118,7 @@ export default function ProfilePage() {
       subscription_type: sub?.plan_name || null,
       end_date: sub?.end_date || null,
       free_uses_remaining: usage?.free_uses_remaining ?? 10,
+      cancel_at_period_end: sub?.cancel_at_period_end || false,
     });
   };
 
@@ -255,8 +257,13 @@ export default function ProfilePage() {
               </h2>
               <div className="flex items-center mt-2 space-x-4">
                 {subscription?.has_subscription && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    subscription.cancel_at_period_end 
+                      ? 'bg-yellow-100 text-yellow-800' 
+                      : 'bg-green-100 text-green-800'
+                  }`}>
                     {subscription.subscription_type}
+                    {subscription.cancel_at_period_end && ' (已取消续费)'}
                   </span>
                 )}
                 <span className="text-gray-500 text-sm">

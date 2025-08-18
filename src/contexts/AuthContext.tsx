@@ -82,9 +82,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Get the current path to redirect back after login
-      const currentPath = window.location.pathname;
-      const redirectPath = currentPath === '/' ? '/generator' : currentPath;
+      // Always redirect to generator page after login
+      const redirectPath = '/generator';
 
       // 登录后重定向到相应页面
       const { data, error } = await supabase.auth.signInWithOAuth({
