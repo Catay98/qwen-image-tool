@@ -483,35 +483,59 @@ async function handlePointsPackagePurchase(params: {
       }
     }
 
-    // 创建积分购买记录
-    const purchaseData = {
+    // 创建积分购买记录 - 使用简化的数据结构以确保兼容性
+    const purchaseData: any = {
       user_id: userId,
-      package_id: packageId || null,  // 确保packageId可以为null
-      package_name: packageName || '积分充值',
       price: amount,
-      points: points,
-      bonus_points: bonusPoints,
-      total_points: totalPoints,
+      points: totalPoints || points || 0,  // 使用totalPoints或points
       payment_method: 'stripe',
       payment_status: 'completed',
-      transaction_id: sessionId,
-      payment_details: {
-        session_id: sessionId
-      },
-      created_at: new Date().toISOString()
+      transaction_id: sessionId
     };
     
-    console.log('Creating purchase record:', purchaseData);
+    // 可选字段 - 只在存在时添加
+    if (packageName) purchaseData.package_name = packageName;
+    if (packageId) purchaseData.package_id = packageId;
     
-    const { error: purchaseError } = await supabase
-      .from('points_purchase_records')
-      .insert(purchaseData);
-
-    if (purchaseError) {
-      console.error('Error creating purchase record:', purchaseError);
-      console.error('Purchase data was:', purchaseData);
-    } else {
-      console.log('Purchase record created successfully');
+    // 尝试添加额外字段（如果表支持）
+    try {
+      // 先尝试包含所有字段
+      const fullData = {
+        ...purchaseData,
+        bonus_points: bonusPoints || 0,
+        total_points: totalPoints || points || 0,
+        payment_details: {
+          session_id: sessionId
+        }
+      };
+      
+      console.log('Attempting to create purchase record with full data:', fullData);
+      
+      const { error: fullError } = await supabase
+        .from('points_purchase_records')
+        .insert(fullData);
+      
+      if (fullError) {
+        console.error('Full insert failed, trying simplified version:', fullError.message);
+        
+        // 如果失败，使用简化版本
+        console.log('Creating purchase record with simplified data:', purchaseData);
+        
+        const { error: simpleError } = await supabase
+          .from('points_purchase_records')
+          .insert(purchaseData);
+        
+        if (simpleError) {
+          console.error('Error creating purchase record:', simpleError);
+          console.error('Purchase data was:', purchaseData);
+        } else {
+          console.log('Purchase record created successfully (simplified)');
+        }
+      } else {
+        console.log('Purchase record created successfully (full)');
+      }
+    } catch (err) {
+      console.error('Unexpected error creating purchase record:', err);
     }
 
     // 创建积分日志
