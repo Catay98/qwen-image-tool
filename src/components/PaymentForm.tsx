@@ -46,7 +46,7 @@ export function PaymentForm({
       const userId = localStorage.getItem('userId');
       
       if (!userId) {
-        router.push('/admin/login');
+        router.push('/ydm/login');
         return;
       }
 

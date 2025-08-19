@@ -62,7 +62,7 @@ export default function AdminSubscriptions() {
       const response = await fetch('/api/admin/verify');
 
       if (!response.ok) {
-        router.push('/admin/login');
+        router.push('/ydm/login');
         return;
       }
 
@@ -71,7 +71,7 @@ export default function AdminSubscriptions() {
       fetchSubscriptions();
     } catch (error) {
       console.error('Admin check error:', error);
-      router.push('/admin/login');
+      router.push('/ydm/login');
     } finally {
       setLoading(false);
     }

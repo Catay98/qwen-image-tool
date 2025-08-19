@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 interface AdminLayoutProps {
@@ -11,6 +11,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  useEffect(() => {
+    // 设置浏览器标题
+    document.title = "Qwen管理后台";
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -52,7 +57,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <div className="flex items-center ml-4">
                 <span className="text-2xl mr-2">🔐</span>
                 <span className="text-xl font-bold text-white">
-                  管理后台
+                  Qwen管理后台
                 </span>
               </div>
             </div>

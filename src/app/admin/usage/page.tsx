@@ -49,11 +49,11 @@ export default function AdminUsage() {
       const response = await fetch('/api/admin/verify');
 
       if (!response.ok) {
-        router.push('/admin/login');
+        router.push('/ydm/login');
       }
     } catch (error) {
       console.error('Auth check error:', error);
-      router.push('/admin/login');
+      router.push('/ydm/login');
     }
   };
 
