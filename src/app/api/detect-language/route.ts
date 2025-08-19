@@ -60,23 +60,54 @@ export async function GET(request: NextRequest) {
     let browserLanguage = 'en';
     const primaryBrowserLang = browserLanguages[0]?.code || '';
     
-    if (primaryBrowserLang.startsWith('zh')) {
+    // 更详细的语言匹配
+    if (primaryBrowserLang.startsWith('zh') || 
+        primaryBrowserLang === 'zh-cn' || 
+        primaryBrowserLang === 'zh-tw' ||
+        primaryBrowserLang === 'zh-hk') {
       browserLanguage = 'zh';
-    } else if (primaryBrowserLang.startsWith('ja')) {
+    } else if (primaryBrowserLang.startsWith('ja') || 
+               primaryBrowserLang === 'ja-jp') {
       browserLanguage = 'ja';
-    } else if (primaryBrowserLang.startsWith('ko')) {
+    } else if (primaryBrowserLang.startsWith('ko') || 
+               primaryBrowserLang === 'ko-kr') {
       browserLanguage = 'ko';
     } else if (primaryBrowserLang.startsWith('en')) {
       browserLanguage = 'en';
+    } else {
+      // 如果不是支持的语言，检查次要语言偏好
+      for (const lang of browserLanguages) {
+        if (lang.code.startsWith('zh')) {
+          browserLanguage = 'zh';
+          break;
+        } else if (lang.code.startsWith('ja')) {
+          browserLanguage = 'ja';
+          break;
+        } else if (lang.code.startsWith('ko')) {
+          browserLanguage = 'ko';
+          break;
+        } else if (lang.code.startsWith('en')) {
+          browserLanguage = 'en';
+          break;
+        }
+      }
     }
     
     // 5. 综合判断最终语言
     // 优先级：浏览器语言 > IP定位语言
     let finalLanguage = browserLanguage;
     
-    // 如果浏览器语言是英语但IP在中文区，使用中文
-    if (browserLanguage === 'en' && detectedLanguage === 'zh') {
-      finalLanguage = 'zh';
+    // 如果浏览器没有明确的语言偏好（默认英语），则使用IP定位
+    if (browserLanguage === 'en' && detectedLanguage !== 'en') {
+      // 检查是否真的偏好英语，还是只是默认值
+      const hasExplicitEnglishPreference = browserLanguages.some(
+        lang => lang.code.startsWith('en') && lang.quality >= 0.9
+      );
+      
+      if (!hasExplicitEnglishPreference) {
+        // 没有明确的英语偏好，使用IP定位的语言
+        finalLanguage = detectedLanguage;
+      }
     }
     
     // 6. 返回检测结果

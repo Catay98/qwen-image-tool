@@ -45,10 +45,12 @@ export function useAutoLanguage() {
           const data: LanguageDetection = await response.json();
           setDetectionResult(data);
           
+          console.log('Language detection result:', data);
+          
           // 如果检测到的语言与当前语言不同，且是支持的语言
           const supportedLanguages = ['en', 'zh', 'ja', 'ko'];
-          if (supportedLanguages.includes(data.detectedLanguage) && 
-              data.detectedLanguage !== i18n.language) {
+          if (supportedLanguages.includes(data.detectedLanguage)) {
+            console.log(`Switching language from ${i18n.language} to ${data.detectedLanguage}`);
             
             // 自动切换语言
             await i18n.changeLanguage(data.detectedLanguage);
@@ -56,6 +58,11 @@ export function useAutoLanguage() {
             // 保存自动检测的语言（但不标记为手动设置）
             localStorage.setItem('autoDetectedLanguage', data.detectedLanguage);
             localStorage.setItem('languageDetectionInfo', JSON.stringify(data));
+            
+            // 更新HTML lang属性
+            if (typeof document !== 'undefined') {
+              document.documentElement.lang = data.detectedLanguage;
+            }
           }
         }
       } catch (error) {

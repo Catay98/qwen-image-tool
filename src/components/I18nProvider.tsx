@@ -10,30 +10,18 @@ export default function I18nProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     setIsClient(true);
     
-    // 只在客户端进行语言检测
+    // 简化语言初始化，让AutoLanguageProvider处理语言检测
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('preferred-language');
+      // 检查是否有用户手动设置的语言
+      const userLanguage = localStorage.getItem('userLanguage');
+      const autoDetectedLanguage = localStorage.getItem('autoDetectedLanguage');
+      const preferredLanguage = localStorage.getItem('preferred-language');
       
-      if (saved === 'zh' || saved === 'en') {
-        // 使用保存的语言偏好
-        i18n.changeLanguage(saved);
-      } else {
-        // 检测浏览器语言
-        const browserLang = navigator.language || (navigator as any).userLanguage || '';
-        const langCode = browserLang.toLowerCase();
-        
-        let detectedLang = 'en';
-        if (langCode.startsWith('zh') || 
-            langCode.startsWith('cn') || 
-            langCode === 'chinese' ||
-            langCode.includes('hans') || 
-            langCode.includes('hant')) {
-          detectedLang = 'zh';
-        }
-        
-        // 保存检测到的语言
-        localStorage.setItem('preferred-language', detectedLang);
-        i18n.changeLanguage(detectedLang);
+      // 优先使用用户手动设置的语言
+      const languageToUse = userLanguage || autoDetectedLanguage || preferredLanguage || 'en';
+      
+      if (languageToUse && ['zh', 'en', 'ja', 'ko'].includes(languageToUse)) {
+        i18n.changeLanguage(languageToUse);
       }
     }
   }, []);
