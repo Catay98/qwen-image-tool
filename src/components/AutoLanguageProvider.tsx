@@ -7,6 +7,9 @@ export function AutoLanguageProvider({ children }: { children: React.ReactNode }
   const { isDetecting } = useAutoLanguage();
 
   useEffect(() => {
+    // 只在客户端执行
+    if (typeof window === 'undefined') return;
+    
     // 语言检测完成后，更新HTML的lang属性
     if (!isDetecting) {
       const lang = localStorage.getItem('userLanguage') || 

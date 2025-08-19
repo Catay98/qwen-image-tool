@@ -16,13 +16,21 @@ export function useAutoLanguage() {
   const { i18n } = useTranslation();
   const [isDetecting, setIsDetecting] = useState(true);
   const [detectionResult, setDetectionResult] = useState<LanguageDetection | null>(null);
+  const [isManuallySet, setIsManuallySet] = useState(false);
 
   useEffect(() => {
     const detectAndSetLanguage = async () => {
       try {
+        // 只在客户端访问 localStorage
+        if (typeof window === 'undefined') {
+          setIsDetecting(false);
+          return;
+        }
+
         // 检查是否已有用户手动设置的语言
         const savedLanguage = localStorage.getItem('userLanguage');
         const hasManuallySet = localStorage.getItem('languageManuallySet') === 'true';
+        setIsManuallySet(hasManuallySet);
         
         // 如果用户手动设置过语言，使用用户的选择
         if (hasManuallySet && savedLanguage) {
@@ -65,15 +73,21 @@ export function useAutoLanguage() {
 
   // 提供手动切换语言的方法
   const setLanguageManually = (language: string) => {
+    if (typeof window === 'undefined') return;
+    
     i18n.changeLanguage(language);
     localStorage.setItem('userLanguage', language);
     localStorage.setItem('languageManuallySet', 'true');
+    setIsManuallySet(true);
   };
 
   // 重置为自动检测
   const resetToAutoDetect = async () => {
+    if (typeof window === 'undefined') return;
+    
     localStorage.removeItem('userLanguage');
     localStorage.removeItem('languageManuallySet');
+    setIsManuallySet(false);
     
     // 重新检测
     try {
@@ -94,6 +108,6 @@ export function useAutoLanguage() {
     currentLanguage: i18n.language,
     setLanguageManually,
     resetToAutoDetect,
-    isManuallySet: localStorage.getItem('languageManuallySet') === 'true'
+    isManuallySet
   };
 }
