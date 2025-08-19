@@ -1,0 +1,99 @@
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+interface LanguageDetection {
+  detectedLanguage: string;
+  browserLanguage: string;
+  ipBasedLanguage: string;
+  location?: {
+    ip: string;
+    country: string;
+    countryCode: string;
+  };
+}
+
+export function useAutoLanguage() {
+  const { i18n } = useTranslation();
+  const [isDetecting, setIsDetecting] = useState(true);
+  const [detectionResult, setDetectionResult] = useState<LanguageDetection | null>(null);
+
+  useEffect(() => {
+    const detectAndSetLanguage = async () => {
+      try {
+        // 检查是否已有用户手动设置的语言
+        const savedLanguage = localStorage.getItem('userLanguage');
+        const hasManuallySet = localStorage.getItem('languageManuallySet') === 'true';
+        
+        // 如果用户手动设置过语言，使用用户的选择
+        if (hasManuallySet && savedLanguage) {
+          i18n.changeLanguage(savedLanguage);
+          setIsDetecting(false);
+          return;
+        }
+
+        // 否则自动检测语言
+        const response = await fetch('/api/detect-language');
+        if (response.ok) {
+          const data: LanguageDetection = await response.json();
+          setDetectionResult(data);
+          
+          // 如果检测到的语言与当前语言不同，且是支持的语言
+          const supportedLanguages = ['en', 'zh', 'ja', 'ko'];
+          if (supportedLanguages.includes(data.detectedLanguage) && 
+              data.detectedLanguage !== i18n.language) {
+            
+            // 自动切换语言
+            await i18n.changeLanguage(data.detectedLanguage);
+            
+            // 保存自动检测的语言（但不标记为手动设置）
+            localStorage.setItem('autoDetectedLanguage', data.detectedLanguage);
+            localStorage.setItem('languageDetectionInfo', JSON.stringify(data));
+          }
+        }
+      } catch (error) {
+        console.error('Error auto-detecting language:', error);
+      } finally {
+        setIsDetecting(false);
+      }
+    };
+
+    // 只在组件首次加载时检测
+    if (typeof window !== 'undefined') {
+      detectAndSetLanguage();
+    }
+  }, []); // 空依赖数组，只运行一次
+
+  // 提供手动切换语言的方法
+  const setLanguageManually = (language: string) => {
+    i18n.changeLanguage(language);
+    localStorage.setItem('userLanguage', language);
+    localStorage.setItem('languageManuallySet', 'true');
+  };
+
+  // 重置为自动检测
+  const resetToAutoDetect = async () => {
+    localStorage.removeItem('userLanguage');
+    localStorage.removeItem('languageManuallySet');
+    
+    // 重新检测
+    try {
+      const response = await fetch('/api/detect-language');
+      if (response.ok) {
+        const data: LanguageDetection = await response.json();
+        await i18n.changeLanguage(data.detectedLanguage);
+        localStorage.setItem('autoDetectedLanguage', data.detectedLanguage);
+      }
+    } catch (error) {
+      console.error('Error resetting to auto-detect:', error);
+    }
+  };
+
+  return {
+    isDetecting,
+    detectionResult,
+    currentLanguage: i18n.language,
+    setLanguageManually,
+    resetToAutoDetect,
+    isManuallySet: localStorage.getItem('languageManuallySet') === 'true'
+  };
+}
