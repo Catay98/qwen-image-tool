@@ -6,6 +6,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import ShowcaseGallery from "@/components/ShowcaseGallery";
 import Footer from "@/components/Footer";
 import TranslationWrapper from "@/components/TranslationWrapper";
+import DisclaimerModal from "@/components/DisclaimerModal";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +21,9 @@ export default function HomePage() {
 
   return (
     <>
+      {/* 免责声明弹窗 */}
+      <DisclaimerModal />
+      
       <main className="min-h-screen">
         <NavBar />
         

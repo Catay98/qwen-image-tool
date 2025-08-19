@@ -39,6 +39,7 @@ export default function Footer() {
       { href: '/help', label: t('footer.support') },
     ],
     legal: [
+      { href: '/disclaimer', label: language === 'zh' ? '⚠️ 免责声明' : '⚠️ Disclaimer', className: 'text-yellow-400 font-bold' },
       { href: '/privacy', label: t('footer.privacy') },
       { href: '/terms', label: t('footer.terms') },
       { href: '#', label: t('footer.cookies') },
@@ -64,13 +65,13 @@ export default function Footer() {
                 <span className="text-white text-2xl">🎨</span>
               </div>
               <span className="font-bold text-2xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Qwen Image
+                AIQwen
               </span>
             </div>
             <p className="text-sm text-gray-300 dark:text-gray-400 mb-6 leading-relaxed">
               {language === 'zh' 
-                ? '为每个人提供的AI图像生成工具。使用 Qwen Image 技术创造令人惊叹的视觉效果。'
-                : 'AI-powered image generation for everyone. Create stunning visuals with Qwen Image technology.'}
+                ? '独立的AI图像生成服务平台。使用先进的AI技术创造令人惊叹的视觉效果。'
+                : 'Independent AI image generation service. Create stunning visuals with advanced AI technology.'}
             </p>
             <div className="flex gap-3">
               <a
@@ -141,7 +142,7 @@ export default function Footer() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-300 hover:text-white transition-colors"
+                      className={(link as any).className || "text-sm text-gray-300 hover:text-white transition-colors"}
                     >
                       {link.label}
                     </Link>
@@ -166,7 +167,7 @@ export default function Footer() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-300 hover:text-white transition-colors"
+                      className={(link as any).className || "text-sm text-gray-300 hover:text-white transition-colors"}
                     >
                       {link.label}
                     </Link>
@@ -194,7 +195,7 @@ export default function Footer() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-300 hover:text-white transition-colors"
+                      className={(link as any).className || "text-sm text-gray-300 hover:text-white transition-colors"}
                     >
                       {link.label}
                     </Link>
@@ -205,16 +206,42 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* 免责声明部分 */}
+        <div className="mt-8 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div className="flex-1">
+              <h4 className="font-bold text-yellow-400 mb-2">
+                {language === 'zh' ? '重要声明' : 'Important Notice'}
+              </h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                {language === 'zh' 
+                  ? '本网站 AIQwen (www.aiqwen.cc) 是一个独立运营的AI图像生成服务平台，与阿里巴巴集团、通义千问（Tongyi Qianwen）或任何其他公司均无任何关联。我们提供的服务基于开源AI技术，所有支付通过Stripe安全处理。'
+                  : 'This website AIQwen (www.aiqwen.cc) is an independently operated AI image generation service platform, not affiliated with Alibaba Group, Tongyi Qianwen, or any other companies. Our services are based on open-source AI technology, with all payments securely processed through Stripe.'}
+              </p>
+              <Link 
+                href="/disclaimer" 
+                className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 font-medium mt-3 transition-colors"
+              >
+                <span>{language === 'zh' ? '查看完整免责声明' : 'View Full Disclaimer'}</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                © {currentYear} Qwen Image AI. All rights reserved.
+                © {currentYear} AIQwen - Independent AI Service. All rights reserved.
               </p>
               <span className="text-gray-400 dark:text-gray-600">|</span>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Powered by <span className="font-semibold text-purple-600 dark:text-purple-400">Qwen Image</span> Technology
+                {language === 'zh' ? '独立AI服务平台' : 'Independent AI Platform'}
               </p>
             </div>
           </div>
