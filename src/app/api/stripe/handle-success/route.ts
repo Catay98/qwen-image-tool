@@ -437,6 +437,10 @@ async function handlePointsPackagePurchase(params: {
   const { userId, packageId, packageName, points, bonusPoints, totalPoints, amount, sessionId } = params;
 
   try {
+    // 计算到期时间（60天后）
+    const expireDate = new Date();
+    expireDate.setDate(expireDate.getDate() + 60);
+    
     // 添加积分到用户账户
     const { data: userPoints, error: fetchError } = await supabase
       .from('user_points')
@@ -489,7 +493,8 @@ async function handlePointsPackagePurchase(params: {
       price: amount,
       points: totalPoints || points || 0,  // 使用totalPoints或points
       payment_method: 'stripe',
-      payment_status: 'completed'  // 现在可以使用completed
+      payment_status: 'completed',  // 现在可以使用completed
+      expire_at: expireDate.toISOString()  // 添加到期时间
     };
     
     // 可选字段 - 只在存在时添加

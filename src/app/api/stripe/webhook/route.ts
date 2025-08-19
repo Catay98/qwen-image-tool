@@ -206,9 +206,12 @@ async function handlePointsPackagePurchase(session: Stripe.Checkout.Session) {
     payment_method: 'stripe',
     payment_status: 'completed',
     transaction_id: session.payment_intent as string,
+    expire_at: expireDate.toISOString(), // 添加到期时间
     payment_details: {
       session_id: session.id,
-      customer_email: session.customer_email
+      customer_email: session.customer_email,
+      validity_days: validityDays,
+      expire_at: expireDate.toISOString()
     }
   };
   

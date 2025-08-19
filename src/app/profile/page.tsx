@@ -65,6 +65,7 @@ export default function ProfilePage() {
         fetchSubscription(),
         fetchPoints(),
         fetchUsage(),
+        checkPointsExpiry(),
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -213,6 +214,28 @@ export default function ProfilePage() {
       total_uses: totalUses,
       last_use: lastUse,
     });
+  };
+
+  const checkPointsExpiry = async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch('/api/points/check-expiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const data = await response.json();
+      if (data.expiredPoints > 0) {
+        // 如果有积分过期，刷新积分数据
+        await fetchPoints();
+      }
+    } catch (error) {
+      console.error('Error checking points expiry:', error);
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -461,13 +484,13 @@ export default function ProfilePage() {
           {activeTab === "points" && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {t('profile.points')} Information
+                {t('profile.points')}信息
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="bg-gray-50 rounded-lg p-4 mb-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-600">Total {t('profile.points')}</span>
+                      <span className="text-gray-600">总{t('profile.points')}</span>
                       <span className="font-semibold">
                         {points?.total_points || 0}
                       </span>
@@ -479,7 +502,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Used {t('profile.points')}</span>
+                      <span className="text-gray-600">已用{t('profile.points')}</span>
                       <span className="font-semibold text-gray-500">
                         {points?.used_points || 0}
                       </span>
@@ -534,13 +557,13 @@ export default function ProfilePage() {
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-gray-600 text-sm">Total Usage Count</p>
+                  <p className="text-gray-600 text-sm">总使用次数</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">
                     {usage?.total_uses || 0}
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-gray-600 text-sm">Last Use Time</p>
+                  <p className="text-gray-600 text-sm">最后使用时间</p>
                   <p className="text-sm font-medium text-gray-900 mt-1">
                     {formatDateTime(usage?.last_use)}
                   </p>
