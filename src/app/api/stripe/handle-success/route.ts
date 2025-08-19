@@ -484,26 +484,34 @@ async function handlePointsPackagePurchase(params: {
     }
 
     // 创建积分购买记录
+    const purchaseData = {
+      user_id: userId,
+      package_id: packageId || null,  // 确保packageId可以为null
+      package_name: packageName || '积分充值',
+      price: amount,
+      points: points,
+      bonus_points: bonusPoints,
+      total_points: totalPoints,
+      payment_method: 'stripe',
+      payment_status: 'completed',
+      transaction_id: sessionId,
+      payment_details: {
+        session_id: sessionId
+      },
+      created_at: new Date().toISOString()
+    };
+    
+    console.log('Creating purchase record:', purchaseData);
+    
     const { error: purchaseError } = await supabase
       .from('points_purchase_records')
-      .insert({
-        user_id: userId,
-        package_id: packageId,
-        package_name: packageName,
-        price: amount,
-        points: points,
-        bonus_points: bonusPoints,
-        total_points: totalPoints,
-        payment_method: 'stripe',
-        payment_status: 'completed',
-        transaction_id: sessionId,
-        payment_details: {
-          session_id: sessionId
-        }
-      });
+      .insert(purchaseData);
 
     if (purchaseError) {
       console.error('Error creating purchase record:', purchaseError);
+      console.error('Purchase data was:', purchaseData);
+    } else {
+      console.log('Purchase record created successfully');
     }
 
     // 创建积分日志
