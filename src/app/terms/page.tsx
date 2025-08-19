@@ -121,7 +121,7 @@ export default function TermsPage() {
                 {t('terms.contactDesc')}
               </p>
               <p className="text-gray-700 dark:text-gray-300 mt-2">
-                {t('terms.contactEmail')}: legal@aiqwen.cc
+                {t('terms.contactEmail')}: media@aiqwen.cc
               </p>
             </section>
           </div>

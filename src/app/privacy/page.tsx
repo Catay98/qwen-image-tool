@@ -102,7 +102,7 @@ export default function PrivacyPage() {
                 {t('privacy.contactDesc')}
               </p>
               <p className="text-gray-700 dark:text-gray-300 mt-2">
-                {t('privacy.contactEmail')}: privacy@aiqwen.cc
+                {t('privacy.contactEmail')}: media@aiqwen.cc
               </p>
             </section>
           </div>

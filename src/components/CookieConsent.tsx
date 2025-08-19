@@ -378,15 +378,15 @@ const language = i18n.language;
   return (
     <>
       {/* Cookie Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-white dark:bg-gray-900 border-t-2 border-gray-200 dark:border-gray-700 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-white border-t-2 border-gray-200 shadow-2xl">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center">
+              <h3 className="text-xl font-bold text-gray-900 mb-3 flex items-center">
                 <span className="mr-2 text-2xl">🍪</span>
                 {language === 'zh' ? 'Cookie 使用说明' : 'Cookie Notice'}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-black font-medium leading-relaxed">
                 {consentText}
               </p>
             </div>
@@ -403,7 +403,7 @@ const language = i18n.language;
               {/* Reject All - Secondary button */}
               <button
                 onClick={handleRejectAll}
-                className="px-8 py-3.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-center border border-gray-300 dark:border-gray-600"
+                className="px-8 py-3.5 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
               >
                 {language === 'zh' ? '全部拒绝' : 'Reject All'}
               </button>
@@ -411,7 +411,7 @@ const language = i18n.language;
               {/* Customize - Secondary button */}
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="px-8 py-3.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-center border border-gray-300 dark:border-gray-600"
+                className="px-8 py-3.5 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
               >
                 {language === 'zh' ? '自定义偏好' : 'Customize'} ⚙️
               </button>
@@ -420,22 +420,22 @@ const language = i18n.language;
 
           {/* Expandable Settings */}
           {showSettings && (
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="text-lg font-bold text-black mb-4">
                 {language === 'zh' ? '自定义Cookie偏好设置' : 'Customize Cookie Preferences'}
               </h4>
               
               <div className="space-y-4">
                 {/* Necessary Cookies - Always On */}
-                <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex-1">
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '必要Cookie' : 'Necessary Cookies'}
                       <span className="ml-2 text-xs bg-green-600 text-white px-2 py-1 rounded-full">
                         {language === 'zh' ? '始终启用' : 'Always Active'}
                       </span>
                     </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-black">
                       {language === 'zh' 
                         ? '维持登录状态、购物车功能、安全认证以及记住您的Cookie选择。这些是网站正常运行所必需的。'
                         : 'Maintain login status, shopping cart functionality, security authentication, and remember your cookie choices. These are essential for the website to function properly.'}
@@ -450,12 +450,12 @@ const language = i18n.language;
                 </div>
 
                 {/* Analytics Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '分析Cookie' : 'Analytics Cookies'}
                     </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-black">
                       {language === 'zh'
                         ? '包括Google Analytics、Hotjar等工具，用于统计流量和分析用户行为，帮助我们改进网站。'
                         : 'Including Google Analytics, Hotjar and other tools for traffic statistics and user behavior analysis to help us improve the website.'}
@@ -468,17 +468,17 @@ const language = i18n.language;
                       onChange={(e) => setPreferences({...preferences, analytics: e.target.checked})}
                       className="sr-only peer"
                     />
-                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                   </label>
                 </div>
 
                 {/* Marketing Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '营销Cookie' : 'Marketing Cookies'}
                     </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-black">
                       {language === 'zh'
                         ? '包括Meta Pixel、Google Ads、Criteo等，用于广告投放和再营销，展示个性化广告。'
                         : 'Including Meta Pixel, Google Ads, Criteo, etc., for advertising and remarketing to show personalized ads.'}
@@ -491,17 +491,17 @@ const language = i18n.language;
                       onChange={(e) => setPreferences({...preferences, marketing: e.target.checked})}
                       className="sr-only peer"
                     />
-                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                   </label>
                 </div>
 
                 {/* Functional Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
-                    <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '功能性Cookie' : 'Functional Cookies'}
                     </h5>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-black">
                       {language === 'zh'
                         ? '记住您的偏好设置，如主题颜色、布局等个性化选项，以及社交媒体插件。'
                         : 'Remember your preferences such as theme color, layout and other personalization options, as well as social media plugins.'}
@@ -514,7 +514,7 @@ const language = i18n.language;
                       onChange={(e) => setPreferences({...preferences, functional: e.target.checked})}
                       className="sr-only peer"
                     />
-                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
                   </label>
                 </div>
               </div>
@@ -529,7 +529,7 @@ const language = i18n.language;
               </div>
 
               {/* Privacy Links */}
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+              <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-black font-medium">
                 <a href="/privacy" className="hover:text-purple-600 mr-4">
                   {language === 'zh' ? '隐私政策' : 'Privacy Policy'}
                 </a>

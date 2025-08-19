@@ -10,7 +10,8 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const router = useRouter();
 
   const handleStartCreating = () => {
@@ -40,7 +41,9 @@ export default function HomePage() {
               {t('features.ctaText')}
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join thousands of creators using Qwen Image every day to bring their ideas to life
+              {language === 'zh' 
+                ? '加入数千位创作者，每天使用 Qwen Image 将创意变为现实'
+                : 'Join thousands of creators using Qwen Image every day to bring their ideas to life'}
             </p>
             <TranslationWrapper className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
