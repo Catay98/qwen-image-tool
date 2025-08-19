@@ -14,18 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Qwen Image - AI Image Generator | Qwen Image AI Art Creator | Qwen Image",
-  description: "Qwen Image is the leading AI image generator. Create stunning art with Qwen Image AI technology. Transform text to images instantly with Qwen Image. Try Qwen Image free - no registration required. Join millions using Qwen Image for AI art generation.",
-  keywords: "Qwen Image, Qwen Image AI, Qwen Image generator, Qwen Image art, AI image generator, Qwen Image creator, Qwen Image technology, Qwen Image platform",
+  title: "AIQwen Image Generator - Independent AI Art Creation Platform",
+  description: "AIQwen is an independent AI image generation service. Not affiliated with Alibaba or Tongyi Qianwen. Create stunning art with our AI technology. Safe and secure payment via Stripe.",
+  keywords: "AI image generator, AI art creator, independent AI service, image generation platform",
   openGraph: {
-    title: "Qwen Image - Revolutionary AI Image Generator",
-    description: "Create stunning images with Qwen Image AI. The most advanced Qwen Image technology for AI art generation.",
-    siteName: "Qwen Image",
+    title: "AIQwen - Independent AI Image Generator",
+    description: "Independent AI art generation platform. Not affiliated with any other companies. Secure payments via Stripe.",
+    siteName: "AIQwen Image Generator",
   },
   twitter: {
-    title: "Qwen Image - AI Image Generator",
-    description: "Transform your ideas into art with Qwen Image AI. Try Qwen Image free today!",
+    title: "AIQwen - Independent AI Image Generator",
+    description: "Create AI art on our independent platform. Safe and secure.",
     card: "summary_large_image",
+  },
+  verification: {
+    google: "YOUR_GOOGLE_VERIFICATION_CODE",
   },
 };
 
