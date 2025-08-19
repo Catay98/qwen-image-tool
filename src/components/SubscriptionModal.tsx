@@ -40,13 +40,11 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
     if (!user) return;
     
     try {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) return;
-      
       const { data, error } = await supabase
-        .from('subscription')
+        .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
+        .eq('status', 'active')
         .single();
       
       if (data && !error) {
@@ -54,6 +52,7 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
       }
     } catch (error) {
       console.error('Error checking subscription:', error);
+      setHasSubscription(false);
     }
   };
 
@@ -242,7 +241,11 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                     
                     <div className="text-center">
                       <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                        {plan.display_name || plan.name}
+                        {plan.name === 'monthly_subscription' ? t('recharge.monthlySubscription', '月度订阅') : 
+                         plan.name === 'yearly_subscription' ? t('recharge.yearlySubscription', '年度订阅') :
+                         plan.duration_type === 'monthly' ? t('recharge.monthlySubscription', '月度订阅') : 
+                         plan.duration_type === 'yearly' ? t('recharge.yearlySubscription', '年度订阅') : 
+                         plan.display_name || plan.name}
                       </h3>
                       <div className="text-4xl font-bold text-blue-600 mb-1">
                         {points}
@@ -252,10 +255,14 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                         ${plan.price}
                       </div>
                       <p className="text-sm text-gray-600 mb-3">
-                        {plan.description || ''}
+                        {plan.name === 'monthly_subscription' ? t('recharge.monthlyDescription', '每月获得680积分') : 
+                         plan.name === 'yearly_subscription' ? t('recharge.yearlyDescription', '每年获得8000积分') :
+                         plan.duration_type === 'monthly' ? t('recharge.monthlyDescription', '每月获得680积分') : 
+                         plan.duration_type === 'yearly' ? t('recharge.yearlyDescription', '每年获得8000积分') : 
+                         plan.description || ''}
                       </p>
                       <div className="text-xs text-gray-500">
-                        {t('subscriptionModal.generations', { count: Math.floor(points / 10) })}
+                        {Math.floor(points / 10)}{t('subscriptionModal.generationsText', '次生成')}
                       </div>
                     </div>
                     
@@ -281,7 +288,11 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
 
           {/* 功能说明 */}
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-3">{t('subscriptionModal.pointsUsageNote')}</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">
+              {hasSubscription 
+                ? t('subscriptionModal.pointsPackageNote', '积分包购买后2个月内有效')
+                : t('subscriptionModal.subscriptionNote', '订阅期间积分有效，订阅到期后积分失效')}
+            </h3>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
               <div className="flex items-start">
                 <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

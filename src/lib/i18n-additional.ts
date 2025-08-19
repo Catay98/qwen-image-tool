@@ -116,8 +116,12 @@ export const additionalTranslations = {
     'subscriptionModal.loading': 'Loading...',
     'subscriptionModal.mostPopular': 'Most Popular',
     'subscriptionModal.pointsUsageNote': 'Points are valid for 2 months after purchase',
+    'subscriptionModal.pointsPackageNote': 'Points package is valid for 2 months after purchase',
+    'subscriptionModal.subscriptionNote': 'Points are valid during subscription period, expire when subscription ends',
     'subscriptionModal.generations': '{{count}} generations',
+    'subscriptionModal.generationsText': ' generations',
     'subscriptionModal.points': 'points',
+    'subscriptionModal.noPlans': 'No plans available',
     
     // Subscription Modal
     'subscriptionModal.loginRequired': '请先登录',
@@ -134,8 +138,12 @@ export const additionalTranslations = {
     'subscriptionModal.loading': '加载中...',
     'subscriptionModal.mostPopular': '最受欢迎',
     'subscriptionModal.pointsUsageNote': '积分购买后2个月内有效',
+    'subscriptionModal.pointsPackageNote': '积分包购买后2个月内有效',
+    'subscriptionModal.subscriptionNote': '订阅期间积分有效，订阅到期后积分失效',
     'subscriptionModal.generations': '{{count}}次生成',
+    'subscriptionModal.generationsText': '次生成',
     'subscriptionModal.points': '积分',
+    'subscriptionModal.noPlans': '暂无可用套餐',
     
     // Billing page
     'billing.title': 'Billing & Subscription',
