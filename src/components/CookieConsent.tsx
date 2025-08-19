@@ -84,6 +84,11 @@ const language = i18n.language;
   }, []);
 
   const checkConsentStatus = () => {
+    // Skip on server side
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     const consent = localStorage.getItem('cookieConsent');
     const consentTime = localStorage.getItem('cookieConsentTime');
     const consentVersion = localStorage.getItem('cookieConsentVersion');
@@ -124,6 +129,11 @@ const language = i18n.language;
   };
 
   const setupScriptBlocking = () => {
+    // Skip on server side
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+    
     // Override document.createElement to block scripts
     const originalCreateElement = document.createElement;
     document.createElement = function(...args) {

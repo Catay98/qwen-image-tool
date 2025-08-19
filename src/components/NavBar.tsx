@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext';
-import AuthButton from './AuthButton';
-import UserMenu from './UserMenu';
-import LanguageToggle from './LanguageToggle';
-import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
+import { useAuth } from "@/contexts/AuthContext";
+import AuthButton from "./AuthButton";
+import UserMenu from "./UserMenu";
+import LanguageToggle from "./LanguageToggle";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 interface NavBarProps {
   showHistory?: () => void;
@@ -27,8 +27,8 @@ export default function NavBar({ showHistory }: NavBarProps) {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -43,33 +43,40 @@ export default function NavBar({ showHistory }: NavBarProps) {
 
     try {
       const { data: subscription } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("status", "active")
         .single();
 
       setHasSubscription(!!subscription);
     } catch (error) {
-      console.error('Error checking subscription:', error);
+      console.error("Error checking subscription:", error);
       setHasSubscription(false);
     }
   };
 
   const navLinks = [
-    { href: '/', label: t('nav.home'), icon: '🏠' },
-    { href: '/generator', label: t('nav.generator'), icon: '✨', highlight: true },
-    { href: '/pricing', label: t('nav.pricing'), icon: '💎' },
-    { href: '/points-shop', label: t('nav.pointsShop'), icon: '🛍️' },
+    { href: "/", label: t("nav.home"), icon: "🏠" },
+    {
+      href: "/generator",
+      label: t("nav.generator"),
+      icon: "✨",
+      highlight: true,
+    },
+    { href: "/pricing", label: t("nav.pricing"), icon: "💎" },
+    // { href: '/points-shop', label: t('nav.pointsShop'), icon: '🛍️' },
   ];
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-black/30 dark:bg-gray-900/80 backdrop-blur-xl shadow-xl border-b border-white/10' 
-          : 'bg-black/20 dark:bg-gray-900/70 backdrop-blur-md'
-      }`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-black/30 dark:bg-gray-900/80 backdrop-blur-xl shadow-xl border-b border-white/10"
+            : "bg-black/20 dark:bg-gray-900/70 backdrop-blur-md"
+        }`}
+      >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -87,7 +94,9 @@ export default function NavBar({ showHistory }: NavBarProps) {
                       Qwen Image
                     </span>
                   </div>
-                  <div className="text-xs text-gray-300 dark:text-gray-400">AI Art Generator</div>
+                  <div className="text-xs text-gray-300 dark:text-gray-400">
+                    AI Art Generator
+                  </div>
                 </div>
               </Link>
 
@@ -101,10 +110,10 @@ export default function NavBar({ showHistory }: NavBarProps) {
                       href={link.href}
                       className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
                         link.highlight && !isActive
-                          ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-purple-300 dark:text-purple-300 hover:shadow-lg border border-purple-500/30'
+                          ? "bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-purple-300 dark:text-purple-300 hover:shadow-lg border border-purple-500/30"
                           : isActive
-                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                          : 'hover:bg-white/10 dark:hover:bg-gray-800 text-gray-200 dark:text-gray-300'
+                          ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                          : "hover:bg-white/10 dark:hover:bg-gray-800 text-gray-200 dark:text-gray-300"
                       }`}
                     >
                       <span>{link.icon}</span>
@@ -119,20 +128,24 @@ export default function NavBar({ showHistory }: NavBarProps) {
                 })}
               </div>
             </div>
-            
+
             {/* Right Section */}
             <div className="flex items-center space-x-3">
               <div className="hidden md:flex items-center space-x-3">
                 <LanguageToggle />
-                
+
                 {user ? (
                   <>
                     <Link
                       href={hasSubscription ? "/points-shop" : "/recharge"}
                       className="px-5 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium text-sm hover:shadow-lg transition-all hover:scale-105 flex items-center gap-1"
                     >
-                      <span>{hasSubscription ? '💎' : '⚡'}</span>
-                      <span>{hasSubscription ? t('nav.pointsShop') : t('nav.subscribe')}</span>
+                      <span>{hasSubscription ? "💎" : "⚡"}</span>
+                      <span>
+                        {hasSubscription
+                          ? t("nav.pointsShop")
+                          : t("nav.subscribe")}
+                      </span>
                     </Link>
                     <UserMenu />
                   </>
@@ -146,11 +159,26 @@ export default function NavBar({ showHistory }: NavBarProps) {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-gray-700 dark:text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   {mobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   )}
                 </svg>
               </button>
@@ -159,9 +187,13 @@ export default function NavBar({ showHistory }: NavBarProps) {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          mobileMenuOpen ? 'max-h-screen border-t border-gray-200 dark:border-gray-800' : 'max-h-0'
-        }`}>
+        <div
+          className={`lg:hidden transition-all duration-300 overflow-hidden ${
+            mobileMenuOpen
+              ? "max-h-screen border-t border-gray-200 dark:border-gray-800"
+              : "max-h-0"
+          }`}
+        >
           <div className="container mx-auto px-4 py-4 space-y-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -172,10 +204,10 @@ export default function NavBar({ showHistory }: NavBarProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-4 py-3 rounded-xl font-medium transition-all ${
                     link.highlight && !isActive
-                      ? 'bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300'
+                      ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300"
                       : isActive
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   <span className="mr-2">{link.icon}</span>
@@ -198,7 +230,8 @@ export default function NavBar({ showHistory }: NavBarProps) {
                     onClick={() => setMobileMenuOpen(false)}
                     className="block w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium text-center"
                   >
-                    {hasSubscription ? '💎' : '⚡'} {hasSubscription ? t('nav.pointsShop') : t('nav.subscribe')}
+                    {hasSubscription ? "💎" : "⚡"}{" "}
+                    {hasSubscription ? t("nav.pointsShop") : t("nav.subscribe")}
                   </Link>
                   <UserMenu />
                 </>
