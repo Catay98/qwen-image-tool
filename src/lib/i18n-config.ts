@@ -117,6 +117,23 @@ const resources = {
       'pricing.pointsPackages': 'Points Packages',
       'pricing.faq': 'Frequently Asked Questions',
       'pricing.getStarted': 'Get Started',
+      'pricing.mostPopular': 'Most Popular',
+      'pricing.bestValue': 'Best Value',
+      'pricing.buyNow': 'Buy Now',
+      'pricing.faqWhatIsQwen': 'What is Qwen Image?',
+      'pricing.faqWhatIsQwenAnswer': 'Qwen Image is an advanced AI image generation technology that creates stunning visuals from text descriptions.',
+      'pricing.faqGenerations': 'How many images can I generate?',
+      'pricing.faqGenerationsAnswer': 'Each generation uses 10 points. The number of images depends on your subscription or points package.',
+      'pricing.faqCommercial': 'Can I use generated images commercially?',
+      'pricing.faqCommercialAnswer': 'Yes, all images generated with paid plans can be used for commercial purposes.',
+      'pricing.faqDifference': 'What\'s the difference between subscriptions and points?',
+      'pricing.faqDifferenceAnswer': 'Subscriptions provide monthly or yearly points that refresh, while points packages are one-time purchases that don\'t expire.',
+      
+      // Common
+      'common.paymentFailed': 'Payment failed. Please try again or contact support.',
+      'common.purchaseFailed': 'Purchase failed. Please try again.',
+      'common.loginRequired': 'Please login to continue',
+      'common.contactSupport': 'Contact Support',
       
       // History
       'history.title': 'Generation History',
@@ -281,6 +298,23 @@ const resources = {
       'pricing.pointsPackages': '积分套餐',
       'pricing.faq': '常见问题',
       'pricing.getStarted': '开始使用',
+      'pricing.mostPopular': '最受欢迎',
+      'pricing.bestValue': '超值优惠',
+      'pricing.buyNow': '立即购买',
+      'pricing.faqWhatIsQwen': 'Qwen Image 是什么？',
+      'pricing.faqWhatIsQwenAnswer': 'Qwen Image 是一种先进的 AI 图像生成技术，可以根据文字描述创建惊艳的视觉效果。',
+      'pricing.faqGenerations': '我可以生成多少张图片？',
+      'pricing.faqGenerationsAnswer': '每次生成使用 10 积分。图片数量取决于您的订阅或积分包。',
+      'pricing.faqCommercial': '生成的图片可以商用吗？',
+      'pricing.faqCommercialAnswer': '是的，所有付费套餐生成的图片都可以用于商业目的。',
+      'pricing.faqDifference': '订阅和积分有什么区别？',
+      'pricing.faqDifferenceAnswer': '订阅提供每月或每年刷新的积分，而积分包是一次性购买且不会过期。',
+      
+      // 通用
+      'common.paymentFailed': '支付失败，请重试或联系客服',
+      'common.purchaseFailed': '购买失败，请重试',
+      'common.loginRequired': '请登录后继续',
+      'common.contactSupport': '联系客服',
       
       // 历史
       'history.title': '生成历史',

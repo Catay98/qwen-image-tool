@@ -377,8 +377,17 @@ const language = i18n.language;
 
   return (
     <>
-      {/* Cookie Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-6 bg-white border-t-2 border-gray-200 shadow-2xl">
+      {/* Overlay for closing when clicking outside - 完全透明的点击区域 */}
+      {showBanner && (
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => setShowBanner(false)}
+        />
+      )}
+      
+      {/* Cookie Banner - 纯白色不透明 */}
+      {showBanner && (
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-6 border-t-2 border-gray-300 shadow-2xl" style={{ backgroundColor: '#ffffff' }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex-1">
@@ -403,7 +412,8 @@ const language = i18n.language;
               {/* Reject All - Secondary button */}
               <button
                 onClick={handleRejectAll}
-                className="px-8 py-3.5 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
+                className="px-8 py-3.5 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
+                style={{ backgroundColor: '#f3f4f6' }}
               >
                 {language === 'zh' ? '全部拒绝' : 'Reject All'}
               </button>
@@ -411,7 +421,8 @@ const language = i18n.language;
               {/* Customize - Secondary button */}
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="px-8 py-3.5 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
+                className="px-8 py-3.5 text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center border border-gray-300"
+                style={{ backgroundColor: '#f3f4f6' }}
               >
                 {language === 'zh' ? '自定义偏好' : 'Customize'} ⚙️
               </button>
@@ -427,7 +438,7 @@ const language = i18n.language;
               
               <div className="space-y-4">
                 {/* Necessary Cookies - Always On */}
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between p-4 rounded-lg border border-green-200" style={{ backgroundColor: '#f0fdf4' }}>
                   <div className="flex-1">
                     <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '必要Cookie' : 'Necessary Cookies'}
@@ -450,7 +461,7 @@ const language = i18n.language;
                 </div>
 
                 {/* Analytics Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
                   <div className="flex-1">
                     <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '分析Cookie' : 'Analytics Cookies'}
@@ -473,7 +484,7 @@ const language = i18n.language;
                 </div>
 
                 {/* Marketing Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
                   <div className="flex-1">
                     <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '营销Cookie' : 'Marketing Cookies'}
@@ -496,7 +507,7 @@ const language = i18n.language;
                 </div>
 
                 {/* Functional Cookies */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
                   <div className="flex-1">
                     <h5 className="font-semibold text-black mb-1">
                       {language === 'zh' ? '功能性Cookie' : 'Functional Cookies'}
@@ -541,6 +552,7 @@ const language = i18n.language;
           )}
         </div>
       </div>
+      )}
     </>
   );
 }

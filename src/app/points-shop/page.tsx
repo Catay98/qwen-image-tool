@@ -220,7 +220,8 @@ export default function PointsShopPage() {
         </div>
 
         {/* 积分包列表 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
           {packages.map((pkg) => {
             const totalPoints = pkg.points + (pkg.bonus_points || 0);
             const unitPrice = (pkg.price / totalPoints * 10).toFixed(2);
@@ -294,6 +295,7 @@ export default function PointsShopPage() {
               </div>
             );
           })}
+          </div>
         </div>
 
         {/* 购买历史链接 */}

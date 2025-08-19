@@ -26,7 +26,8 @@ interface UpgradePlan {
 }
 
 export default function SubscriptionManagement() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const { user } = useAuth();
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [upgradePlans, setUpgradePlans] = useState<UpgradePlan[]>([]);
@@ -214,7 +215,11 @@ export default function SubscriptionManagement() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-gray-600 mb-1">{t('subscriptionManagement.currentPlan')}</p>
-              <p className="text-xl font-bold text-gray-900">{subscription.plan_name}</p>
+              <p className="text-xl font-bold text-gray-900">
+                {subscription.plan_name === 'Monthly' ? (language === 'zh' ? '月度会员' : 'Monthly') :
+                 subscription.plan_name === 'Yearly' ? (language === 'zh' ? '年度会员' : 'Yearly') :
+                 subscription.plan_name}
+              </p>
               <p className="text-sm text-gray-600 mt-2">
                 {t('subscriptionManagement.startDate')}: {formatDate(subscription.start_date)}
               </p>

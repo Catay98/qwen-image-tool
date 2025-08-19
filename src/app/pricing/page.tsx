@@ -35,7 +35,7 @@ interface PointsPackage {
 
 export default function PricingPage() {
   const { t, i18n } = useTranslation();
-  const language = i18n.language as 'en' | 'zh';
+  const language = (i18n.language === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
   const { user } = useAuth();
   const router = useRouter();
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
@@ -49,7 +49,7 @@ export default function PricingPage() {
 
   const fetchPricingData = async () => {
     try {
-      const lang = localStorage.getItem('i18nextLng') || 'zh';
+      const lang = localStorage.getItem('i18nextLng') || 'en';
       const headers = {
         'Accept-Language': lang
       };
@@ -60,13 +60,23 @@ export default function PricingPage() {
       ]);
 
       if (plansRes.ok) {
-        const plansData = await plansRes.json();
-        setSubscriptionPlans(plansData.plans || []);
+        try {
+          const plansData = await plansRes.json();
+          setSubscriptionPlans(plansData.plans || []);
+        } catch (e) {
+          console.error('Error parsing plans response:', e);
+          setSubscriptionPlans([]);
+        }
       }
 
       if (pointsRes.ok) {
-        const pointsData = await pointsRes.json();
-        setPointsPackages(pointsData.packages || []);
+        try {
+          const pointsData = await pointsRes.json();
+          setPointsPackages(pointsData.packages || []);
+        } catch (e) {
+          console.error('Error parsing points response:', e);
+          setPointsPackages([]);
+        }
       }
     } catch (error) {
       console.error('Error fetching pricing data:', error);
@@ -75,19 +85,68 @@ export default function PricingPage() {
     }
   };
 
-  const handleSelectPlan = (planId: string) => {
+  const handleSelectPlan = async (planId: string) => {
     if (!user) {
       router.push('/?login=true');
-    } else {
-      router.push(`/recharge?plan=${planId}`);
+      return;
+    }
+    
+    // 直接创建Stripe支付会话
+    try {
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id,
+        },
+        body: JSON.stringify({
+          planId: planId,
+          successUrl: `${window.location.origin}/checkout?success=true&type=subscription`,
+          cancelUrl: `${window.location.origin}/pricing?canceled=true`
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.url) {
+        // 直接跳转到Stripe支付页面
+        window.location.href = data.url;
+      } else {
+        alert(t('common.paymentFailed'));
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert(t('common.paymentFailed'));
     }
   };
 
-  const handleSelectPointsPackage = (packageId: string) => {
+  const handleSelectPointsPackage = async (packageId: string) => {
     if (!user) {
       router.push('/?login=true');
-    } else {
-      router.push(`/points-shop?package=${packageId}`);
+      return;
+    }
+    
+    // 直接创建支付会话
+    try {
+      const response = await fetch('/api/points/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id,
+        },
+        body: JSON.stringify({
+          packageId: packageId,
+        }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || t('common.paymentFailed'));
+      }
+    } catch (error) {
+      console.error('Purchase error:', error);
+      alert(t('common.paymentFailed'));
     }
   };
 
@@ -112,10 +171,10 @@ export default function PricingPage() {
             {t('pricing.subtitle', 'Unlock the full potential of Qwen Image AI with our flexible pricing options. Generate stunning images with Qwen Image technology.')}
           </p>
 
-          <div className="inline-flex rounded-2xl bg-white/10 dark:bg-gray-800 backdrop-blur-sm shadow-xl p-1 mb-8 border border-white/20 dark:border-gray-700">
+          <div className="inline-flex flex-col sm:flex-row rounded-2xl bg-white/10 dark:bg-gray-800 backdrop-blur-sm shadow-xl p-1 mb-8 border border-white/20 dark:border-gray-700">
             <button
               onClick={() => setActiveTab('subscription')}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
+              className={`px-4 sm:px-8 py-3 rounded-xl font-semibold transition-all text-center ${
                 activeTab === 'subscription'
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
                   : 'text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-white'
@@ -125,7 +184,7 @@ export default function PricingPage() {
             </button>
             <button
               onClick={() => setActiveTab('points')}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all ${
+              className={`px-4 sm:px-8 py-3 rounded-xl font-semibold transition-all text-center ${
                 activeTab === 'points'
                   ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
                   : 'text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-white'
@@ -147,7 +206,7 @@ export default function PricingPage() {
           {activeTab === 'subscription' && (
             <section className="pb-20 px-4">
               <div className="max-w-7xl mx-auto">
-                <div className={`grid ${subscriptionPlans.length === 0 ? 'grid-cols-1' : subscriptionPlans.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : subscriptionPlans.length === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' : 'md:grid-cols-3'} gap-8`}>
+                <div className={`grid ${subscriptionPlans.length === 0 ? 'grid-cols-1' : subscriptionPlans.length === 1 ? 'grid-cols-1 max-w-md mx-auto' : subscriptionPlans.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' : 'grid-cols-1 md:grid-cols-3'} gap-8`}>
                   {subscriptionPlans.length === 0 ? (
                     <div className="col-span-full text-center py-12">
                       <p className="text-gray-400 text-lg">No subscription plans available at the moment</p>
@@ -176,7 +235,7 @@ export default function PricingPage() {
                         )}
 
                         <h3 className={`text-2xl font-bold mb-2 ${isPopular ? 'text-white' : 'text-white dark:text-white'}`}>
-                          {translatePlanName(plan.slug || plan.name, language)}
+                          {translatePlanName(plan.name || plan.slug, language)}
                         </h3>
                         <p className={`text-sm mb-4 ${isPopular ? 'text-white/80' : 'text-gray-200 dark:text-gray-400'}`}>
                           {translatePlanDescription(plan.description, language)}
@@ -227,13 +286,19 @@ export default function PricingPage() {
               <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-8">
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    💎 Qwen Image Points Packages
+                    💎 {language === 'zh' ? 'Qwen Image 积分套餐' : 'Qwen Image Points Packages'}
                   </h3>
                   <p className="text-gray-200 dark:text-gray-400">
-                    Purchase points to use Qwen Image AI anytime. 1 point = 1 Qwen Image generation
+                    {language === 'zh' ? '购买积分随时使用 Qwen Image AI。10 积分 = 1 次 Qwen Image 生成' : 'Purchase points to use Qwen Image AI anytime. 10 points = 1 Qwen Image generation'}
                   </p>
                 </div>
-                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="flex justify-center">
+                  <div className={`grid gap-6 w-full ${
+                    pointsPackages.length === 1 ? 'grid-cols-1 max-w-md' :
+                    pointsPackages.length === 2 ? 'grid-cols-1 sm:grid-cols-2 max-w-2xl' :
+                    pointsPackages.length === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl' :
+                    'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-6xl'
+                  } mx-auto`}>
                   {pointsPackages.length > 0 ? (
                     pointsPackages.map((pkg) => (
                       <div
@@ -301,6 +366,7 @@ export default function PricingPage() {
                       <p className="text-gray-400">No points packages available at the moment</p>
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
             </section>

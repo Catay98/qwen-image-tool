@@ -21,6 +21,12 @@ export function translateDatabaseContent(content: any, language: 'en' | 'zh'): s
     'Enterprise': { en: 'Enterprise', zh: '企业版' },
     'Basic': { en: 'Basic', zh: '基础版' },
     'Premium': { en: 'Premium', zh: '高级版' },
+    'Monthly': { en: 'Monthly', zh: '月度会员' },
+    'Yearly': { en: 'Yearly', zh: '年度会员' },
+    'monthly_subscription': { en: 'Monthly Subscription', zh: '月度订阅' },
+    'yearly_subscription': { en: 'Yearly Subscription', zh: '年度订阅' },
+    'Monthly Subscription': { en: 'Monthly Subscription', zh: '月度订阅' },
+    'Yearly Subscription': { en: 'Yearly Subscription', zh: '年度订阅' },
     
     // Common features
     'Unlimited generations': { en: 'Unlimited generations', zh: '无限生成' },
@@ -34,23 +40,55 @@ export function translateDatabaseContent(content: any, language: 'en' | 'zh'): s
     'Custom models': { en: 'Custom models', zh: '自定义模型' },
     'Commercial use': { en: 'Commercial use', zh: '商业使用' },
     'Team collaboration': { en: 'Team collaboration', zh: '团队协作' },
+    '高清图片生成': { en: 'HD Image Generation', zh: '高清图片生成' },
+    '优先处理队列': { en: 'Priority Processing Queue', zh: '优先处理队列' },
+    '批量生成功能': { en: 'Batch Generation Feature', zh: '批量生成功能' },
+    '历史记录保存': { en: 'History Record Storage', zh: '历史记录保存' },
+    '无限制生成': { en: 'Unlimited Generation', zh: '无限制生成' },
+    '专属客服支持': { en: 'Dedicated Customer Support', zh: '专属客服支持' },
+    'API接口访问': { en: 'API Interface Access', zh: 'API接口访问' },
+    '团队协作功能': { en: 'Team Collaboration Features', zh: '团队协作功能' },
     
     // Intervals
     'month': { en: 'month', zh: '月' },
     'year': { en: 'year', zh: '年' },
     'day': { en: 'day', zh: '天' },
     'week': { en: 'week', zh: '周' },
+    '每月680积分': { en: '680 points per month', zh: '每月680积分' },
+    '每年8000积分': { en: '8000 points per year', zh: '每年8000积分' },
+    '680 points per month': { en: '680 points per month', zh: '每月680积分' },
+    '8000 points per year': { en: '8000 points per year', zh: '每年8000积分' },
     
     // Points packages
     'Starter Pack': { en: 'Starter Pack', zh: '入门包' },
     'Popular Pack': { en: 'Popular Pack', zh: '热门包' },
     'Pro Pack': { en: 'Pro Pack', zh: '专业包' },
     'Mega Pack': { en: 'Mega Pack', zh: '超值包' },
+    '300积分包': { en: '300 Points Pack', zh: '300积分包' },
+    '700积分包': { en: '700 Points Pack', zh: '700积分包' },
+    '1500积分包': { en: '1500 Points Pack', zh: '1500积分包' },
+    '3000积分包': { en: '3000 Points Pack', zh: '3000积分包' },
+    '300 Points Pack': { en: '300 Points Pack', zh: '300积分包' },
+    '700 Points Pack': { en: '700 Points Pack', zh: '700积分包' },
+    '1500 Points Pack': { en: '1500 Points Pack', zh: '1500积分包' },
+    '3000 Points Pack': { en: '3000 Points Pack', zh: '3000积分包' },
     'points': { en: 'points', zh: '积分' },
     'credits': { en: 'credits', zh: '积分' },
+    '300积分，可生成30张图片': { en: '300 points, can generate 30 images', zh: '300积分，可生成30张图片' },
+    '700积分，可生成70张图片': { en: '700 points, can generate 70 images', zh: '700积分，可生成70张图片' },
+    '1500积分，可生成150张图片': { en: '1500 points, can generate 150 images', zh: '1500积分，可生成150张图片' },
+    '3000积分，可生成300张图片': { en: '3000 points, can generate 300 images', zh: '3000积分，可生成300张图片' },
   };
   
-  // Check if we have a common translation
+  // Check if we have a common translation (case-insensitive)
+  const contentLower = contentStr.toLowerCase();
+  for (const [key, translation] of Object.entries(commonTranslations)) {
+    if (key.toLowerCase() === contentLower) {
+      return translation[language];
+    }
+  }
+  
+  // Direct check for exact match
   if (commonTranslations[contentStr]) {
     return commonTranslations[contentStr][language];
   }
@@ -111,9 +149,32 @@ export function translatePlanName(slug: string, language: 'en' | 'zh'): string {
     'enterprise': { en: 'Enterprise', zh: '企业版' },
     'basic': { en: 'Basic', zh: '基础版' },
     'premium': { en: 'Premium', zh: '高级版' },
+    'monthly_subscription': { en: 'Monthly Subscription', zh: '月度订阅' },
+    'yearly_subscription': { en: 'Yearly Subscription', zh: '年度订阅' },
+    '月度订阅': { en: 'Monthly Subscription', zh: '月度订阅' },
+    '年度订阅': { en: 'Yearly Subscription', zh: '年度订阅' },
+    'Monthly Subscription': { en: 'Monthly Subscription', zh: '月度订阅' },
+    'Yearly Subscription': { en: 'Yearly Subscription', zh: '年度订阅' },
   };
   
-  return planNames[slug.toLowerCase()]?.[language] || slug;
+  // Check if we have a direct translation
+  if (planNames[slug]) {
+    return planNames[slug][language];
+  }
+  
+  // Check lowercase version
+  const slugLower = slug.toLowerCase();
+  if (planNames[slugLower]) {
+    return planNames[slugLower][language];
+  }
+  
+  // Try using the common translations
+  const translated = translateDatabaseContent(slug, language);
+  if (translated !== slug) {
+    return translated;
+  }
+  
+  return slug;
 }
 
 // Helper to translate plan description
