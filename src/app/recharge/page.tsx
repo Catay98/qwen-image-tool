@@ -218,8 +218,8 @@ export default function RechargePage() {
   // 如果认证还在加载，显示加载界面
   if (authLoading) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="min-h-screen" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
           <NavBar />
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -237,8 +237,8 @@ export default function RechargePage() {
   // 如果还在检查订阅状态，显示加载中
   if (checkingSubscription) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="min-h-screen" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
           <NavBar />
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -252,8 +252,8 @@ export default function RechargePage() {
   // 如果有订阅，显示订阅管理页面
   if (hasSubscription) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="min-h-screen" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
           <NavBar />
           <SubscriptionManagement />
         </div>
@@ -263,14 +263,14 @@ export default function RechargePage() {
 
   // 如果没有订阅，显示充值页面
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <main className="min-h-screen" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
         <NavBar />
         
-        <div className="mt-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('recharge.title')}</h1>
-            <p className="text-lg text-gray-600">{t('recharge.subtitle')}</p>
+        <div className="mt-4 md:mt-8">
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">{t('recharge.subscriptionTitle', '订阅套餐')}</h1>
+            <p className="text-sm md:text-lg text-gray-600">{t('recharge.subscriptionSubtitle', '选择适合您的订阅计划')}</p>
             {hasCancelledSubscription && (
               <div className="mt-4 inline-flex items-center bg-yellow-50 px-6 py-3 rounded-full border border-yellow-200">
                 <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -293,19 +293,19 @@ export default function RechargePage() {
               <p className="mt-4 text-gray-600">{t('recharge.loadingPlans')}</p>
             </div>
           ) : plans.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12 max-w-4xl mx-auto">
               {plans.map((plan) => {
                 const points = calculatePoints(plan);
                 const savings = calculateSavings(plan);
-                const isPopular = plan.name === '月订阅' || plan.name === '标准套餐';
+                const isPopular = plan.name === 'monthly_subscription' || plan.duration_type === 'monthly';
                 
                 return (
                   <div
                     key={plan.id}
-                    className={`relative bg-white rounded-2xl p-6 cursor-pointer transition-all transform hover:scale-105 ${
+                    className={`relative bg-white rounded-2xl p-6 md:p-8 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                       selectedPlan === plan.id
-                        ? 'ring-4 ring-blue-500 shadow-xl'
-                        : 'shadow-lg hover:shadow-xl'
+                        ? 'ring-4 ring-blue-600 shadow-2xl scale-105 border-2 border-blue-600'
+                        : 'shadow-lg hover:shadow-2xl border-2 border-transparent'
                     }`}
                     onClick={() => setSelectedPlan(plan.id)}
                   >
@@ -328,18 +328,24 @@ export default function RechargePage() {
                     )}
                     
                     <div className="text-center">
-                      <h3 className="text-xl font-bold mb-3 text-gray-900">
-                        {typeof plan.name === 'object' ? (plan.name.zh || plan.name.en || '') : plan.name}
+                      <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-gray-900">
+                        {plan.name === 'monthly_subscription' ? t('recharge.monthlySubscription', '月度订阅') : 
+                         plan.name === 'yearly_subscription' ? t('recharge.yearlySubscription', '年度订阅') : 
+                         plan.duration_type === 'monthly' ? t('recharge.monthlySubscription', '月度订阅') : 
+                         plan.duration_type === 'yearly' ? t('recharge.yearlySubscription', '年度订阅') : plan.name}
                       </h3>
                       <div className="mb-4">
-                        <span className="text-5xl font-bold text-blue-600">{points}</span>
-                        <span className="text-gray-500 ml-2">积分</span>
+                        <span className="text-3xl md:text-5xl font-bold text-blue-600">{points}</span>
+                        <span className="text-gray-500 ml-2">{t('recharge.points')}</span>
                       </div>
-                      <div className="text-3xl font-bold text-gray-900 mb-3">
+                      <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-3">
                         ${plan.price}
                       </div>
                       <p className="text-gray-600 mb-4">
-                        {typeof plan.description === 'object' ? (plan.description.zh || plan.description.en || '') : plan.description}
+                        {plan.name === 'monthly_subscription' ? t('recharge.monthlyDescription', '每月获得680积分') : 
+                         plan.name === 'yearly_subscription' ? t('recharge.yearlyDescription', '每年获得8000积分') :
+                         plan.duration_type === 'monthly' ? t('recharge.monthlyDescription', '每月获得680积分') : 
+                         plan.duration_type === 'yearly' ? t('recharge.yearlyDescription', '每年获得8000积分') : plan.description}
                       </p>
                       <div className="text-sm text-gray-500 bg-gray-50 rounded-lg py-2">
                         {t('recharge.canGenerate')} <span className="font-bold text-gray-700">{Math.floor(points / 10)}</span> {t('recharge.images')}
@@ -370,63 +376,66 @@ export default function RechargePage() {
           )}
 
           {/* 功能说明 */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('recharge.whySubscribe')}</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 md:mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{t('recharge.whySubscribe')}</h2>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-4">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{t('recharge.flexibleUsage')}</h3>
-                <p className="text-sm text-gray-600">{t('recharge.flexibleUsageDesc')}</p>
+                <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-2">{t('recharge.flexibleUsage')}</h3>
+                <p className="text-xs md:text-sm text-gray-600">{t('recharge.flexibleUsageDesc')}</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-4">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{t('recharge.hdQuality')}</h3>
-                <p className="text-sm text-gray-600">{t('recharge.hdQualityDesc')}</p>
+                <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-2">{t('recharge.hdQuality')}</h3>
+                <p className="text-xs md:text-sm text-gray-600">{t('recharge.hdQualityDesc')}</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-4">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{t('recharge.priorityProcessing')}</h3>
-                <p className="text-sm text-gray-600">{t('recharge.priorityProcessingDesc')}</p>
+                <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-2">{t('recharge.priorityProcessing')}</h3>
+                <p className="text-xs md:text-sm text-gray-600">{t('recharge.priorityProcessingDesc')}</p>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-4">
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{t('recharge.bulkDiscount')}</h3>
-                <p className="text-sm text-gray-600">{t('recharge.bulkDiscount')}</p>
+                <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-2">{t('recharge.bulkDiscount')}</h3>
+                <p className="text-xs md:text-sm text-gray-600">{t('recharge.bulkDiscountDesc')}</p>
               </div>
             </div>
           </div>
 
           {/* 充值按钮 */}
           {plans.length > 0 && selectedPlan && (
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between">
+            <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <p className="text-gray-600 mb-2">{t('recharge.selectedPlan', '已选择的套餐')}</p>
-                  <div className="flex items-baseline">
-                    <span className="text-2xl font-bold text-gray-900">
+                  <div className="flex flex-col md:flex-row md:items-baseline gap-2">
+                    <span className="text-xl md:text-2xl font-bold text-gray-900">
                       {(() => {
                         const plan = plans.find(p => p.id === selectedPlan);
                         if (!plan) return '';
-                        return typeof plan.name === 'object' ? (plan.name.zh || plan.name.en || '') : plan.name;
+                        return plan.name === 'monthly_subscription' ? '月度订阅' : 
+                               plan.name === 'yearly_subscription' ? '年度订阅' :
+                               plan.duration_type === 'monthly' ? '月度订阅' : 
+                               plan.duration_type === 'yearly' ? '年度订阅' : plan.name;
                       })()}
                     </span>
-                    <span className="ml-4 text-3xl font-bold text-blue-600">
+                    <span className="md:ml-4 text-2xl md:text-3xl font-bold text-blue-600">
                       ${plans.find(p => p.id === selectedPlan)?.price}
                     </span>
                   </div>
@@ -434,13 +443,13 @@ export default function RechargePage() {
                 <button
                   onClick={handleRecharge}
                   disabled={loading || !selectedPlan}
-                  className={`px-12 py-4 rounded-xl text-white font-bold text-lg transition-all ${
+                  className={`w-full md:w-auto px-8 md:px-12 py-3 md:py-4 rounded-xl text-white font-bold text-base md:text-lg transition-all ${
                     !loading && selectedPlan
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 shadow-lg'
                       : 'bg-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  {loading ? t('pointsShop.processing') : t('nav.subscribe')}
+                  {loading ? t('pointsShop.processing') : t('nav.subscribe', '立即订阅')}
                 </button>
               </div>
             </div>
