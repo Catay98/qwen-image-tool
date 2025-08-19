@@ -187,10 +187,12 @@ export async function POST(request: NextRequest) {
         cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/recharge?canceled=true`,
         metadata: {
           userId,
-          type: 'one_time',
-          planId: plan.id,
-          planName: plan.name,
-          points: points.toString()
+          type: 'points_package',  // 改为points_package以匹配handle-success
+          packageId: plan.id,  // 使用packageId而不是planId
+          packageName: plan.name,
+          points: points.toString(),
+          bonusPoints: '0',  // 可以从plan中获取
+          totalPoints: points.toString()  // 总积分
         },
         // 不传递customer_email以避免"您已订阅我们的服务"错误
         // customer_email: userData?.email || undefined,

@@ -165,6 +165,7 @@ async function handleSubscriptionCanceled(subscription: Stripe.Subscription) {
 
 // 处理积分包购买
 async function handlePointsPackagePurchase(session: Stripe.Checkout.Session) {
+  console.log('[Webhook] handlePointsPackagePurchase called with session:', session.id);
   const { metadata } = session;
   const userId = metadata.userId;
   const packageId = metadata.packageId;
@@ -172,6 +173,16 @@ async function handlePointsPackagePurchase(session: Stripe.Checkout.Session) {
   const points = parseInt(metadata.points || '0');
   const bonusPoints = parseInt(metadata.bonusPoints || '0');
   const totalPoints = parseInt(metadata.totalPoints || '0');
+  
+  console.log('[Webhook] Points package purchase metadata:', {
+    userId,
+    packageId,
+    packageName,
+    points,
+    bonusPoints,
+    totalPoints,
+    sessionAmount: session.amount_total
+  });
 
   // 获取积分包的有效期设置
   const { data: pointsPackage } = await supabase
@@ -185,30 +196,46 @@ async function handlePointsPackagePurchase(session: Stripe.Checkout.Session) {
   expireDate.setDate(expireDate.getDate() + validityDays);
 
   // 1. 记录积分购买记录
+  const purchaseData: any = {
+    user_id: userId,
+    package_name: packageName,
+    price: session.amount_total ? session.amount_total / 100 : 0,
+    points: points,
+    bonus_points: bonusPoints,
+    total_points: totalPoints,
+    payment_method: 'stripe',
+    payment_status: 'completed',
+    transaction_id: session.payment_intent as string,
+    payment_details: {
+      session_id: session.id,
+      customer_email: session.customer_email
+    }
+  };
+  
+  // 只有当packageId是有效的UUID时才添加
+  if (packageId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packageId)) {
+    purchaseData.package_id = packageId;
+  }
+  
+  console.log('[Webhook] Attempting to insert purchase record:', purchaseData);
+  
   const { data: purchaseRecord, error: purchaseError } = await supabase
     .from('points_purchase_records')
-    .insert({
-      user_id: userId,
-      package_id: packageId,
-      package_name: packageName,
-      price: session.amount_total ? session.amount_total / 100 : 0,
-      points: points,
-      bonus_points: bonusPoints,
-      total_points: totalPoints,
-      payment_method: 'stripe',
-      payment_status: 'completed',
-      transaction_id: session.payment_intent as string,
-      payment_details: {
-        session_id: session.id,
-        customer_email: session.customer_email
-      }
-    })
+    .insert(purchaseData)
     .select()
     .single();
 
   if (purchaseError) {
-    console.error('Error creating purchase record:', purchaseError);
+    console.error('[Webhook] Error creating purchase record:', purchaseError);
+    console.error('[Webhook] Error details:', {
+      code: purchaseError.code,
+      message: purchaseError.message,
+      details: purchaseError.details,
+      hint: purchaseError.hint
+    });
     return;
+  } else {
+    console.log('[Webhook] Purchase record created successfully:', purchaseRecord);
   }
 
   // 2. 创建用户积分包记录（带有效期）

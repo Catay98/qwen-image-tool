@@ -489,13 +489,15 @@ async function handlePointsPackagePurchase(params: {
       price: amount,
       points: totalPoints || points || 0,  // 使用totalPoints或points
       payment_method: 'stripe',
-      payment_status: 'completed',
-      transaction_id: sessionId
+      payment_status: 'completed'  // 现在可以使用completed
     };
     
     // 可选字段 - 只在存在时添加
     if (packageName) purchaseData.package_name = packageName;
-    if (packageId) purchaseData.package_id = packageId;
+    // 只有当packageId是有效的UUID时才添加
+    if (packageId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packageId)) {
+      purchaseData.package_id = packageId;
+    }
     
     // 尝试添加额外字段（如果表支持）
     try {
@@ -504,8 +506,13 @@ async function handlePointsPackagePurchase(params: {
         ...purchaseData,
         bonus_points: bonusPoints || 0,
         total_points: totalPoints || points || 0,
+        transaction_id: sessionId,
         payment_details: {
-          session_id: sessionId
+          session_id: sessionId,
+          package_name: packageName,
+          points: points,
+          bonus_points: bonusPoints,
+          total_points: totalPoints
         }
       };
       
