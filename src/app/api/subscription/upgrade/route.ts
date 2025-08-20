@@ -120,6 +120,7 @@ export async function POST(request: NextRequest) {
         points: newPlan.points?.toString() || '0',
         billingPeriod: newPlan.duration_type
       },
+      // 传递当前登录用户的邮箱
       customer_email: userData.user.email || undefined,
       allow_promotion_codes: true,
       billing_address_collection: 'auto',

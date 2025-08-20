@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
   // 如果有错误，记录并重定向
   if (error) {
     console.error('OAuth callback error:', error, error_description);
-    return NextResponse.redirect(`${requestUrl.origin}/?auth_error=${encodeURIComponent(error_description || error)}`);
+    const errorRedirectUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+    return NextResponse.redirect(`${errorRedirectUrl}/?auth_error=${encodeURIComponent(error_description || error)}`);
   }
 
   // 如果有code，交换token
@@ -20,16 +21,21 @@ export async function GET(request: NextRequest) {
       
       if (exchangeError) {
         console.error('Error exchanging code for session:', exchangeError);
-        return NextResponse.redirect(`${requestUrl.origin}/?auth_error=session_exchange_failed`);
+        const errorRedirectUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+        return NextResponse.redirect(`${errorRedirectUrl}/?auth_error=session_exchange_failed`);
       }
 
       console.log('Successfully authenticated user');
     } catch (err) {
       console.error('Unexpected error during auth callback:', err);
-      return NextResponse.redirect(`${requestUrl.origin}/?auth_error=unexpected_error`);
+      const errorRedirectUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+      return NextResponse.redirect(`${errorRedirectUrl}/?auth_error=unexpected_error`);
     }
   }
 
-  // 成功后重定向到首页
-  return NextResponse.redirect(requestUrl.origin);
+  // 成功后重定向到generator页面
+  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL 
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/generator`
+    : `${requestUrl.origin}/generator`;
+  return NextResponse.redirect(redirectUrl);
 }
