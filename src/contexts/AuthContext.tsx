@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          redirectTo: `${window.location.origin}${redirectPath}`,
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}${redirectPath}`,
         },
       });
 
