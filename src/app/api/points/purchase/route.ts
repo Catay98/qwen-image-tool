@@ -72,12 +72,27 @@ export async function POST(request: NextRequest) {
 
     const totalPoints = pointsPackage.points + (pointsPackage.bonus_points || 0);
 
-    // 获取用户邮箱
+    // 获取用户邮箱（优先从users表，如果没有则从auth获取）
+    let userEmail = null;
     const { data: userData } = await supabase
       .from('users')
       .select('email')
       .eq('id', userId)
       .single();
+    
+    if (userData?.email) {
+      userEmail = userData.email;
+    } else {
+      // 如果users表没有邮箱，从auth获取
+      const authHeader = request.headers.get('authorization');
+      if (authHeader) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: authData } = await supabase.auth.getUser(token);
+        if (authData?.user?.email) {
+          userEmail = authData.user.email;
+        }
+      }
+    }
 
     // 创建Stripe Checkout会话 - 积分包购买
     const session = await stripe.checkout.sessions.create({
@@ -107,7 +122,8 @@ export async function POST(request: NextRequest) {
         bonusPoints: (pointsPackage.bonus_points || 0).toString(),
         totalPoints: totalPoints.toString()
       },
-      customer_email: userData?.email || undefined,
+      // 传递当前登录用户的邮箱
+      customer_email: userEmail || undefined,
     });
 
     if (!session.url) {

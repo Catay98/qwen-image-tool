@@ -69,12 +69,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 获取用户邮箱（可选）
+    // 获取用户邮箱（优先从users表，如果没有则从auth获取）
+    let userEmail = null;
     const { data: userData } = await supabase
       .from('users')
       .select('email')
       .eq('id', userId)
       .single();
+    
+    if (userData?.email) {
+      userEmail = userData.email;
+    } else {
+      // 如果users表没有邮箱，从auth获取
+      const { data: authData } = await supabase.auth.getUser(token);
+      if (authData?.user?.email) {
+        userEmail = authData.user.email;
+      }
+    }
 
     // 检查用户是否已有Stripe客户ID
     let stripeCustomerId = null;
@@ -156,12 +167,12 @@ export async function POST(request: NextRequest) {
           planName: plan.name,
           points: points.toString(),
           billingPeriod: plan.duration_type,
-          userEmail: userData?.email || '' // 在metadata中保存邮箱，但不传给Stripe
+          userEmail: userEmail || '' // 在metadata中保存邮箱
         },
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
-        // 不传递customer_email以避免"您已订阅我们的服务"错误
-        // customer_email: userData?.email || undefined,
+        // 传递当前登录用户的邮箱
+        customer_email: userEmail || undefined,
       };
       
       session = await stripe.checkout.sessions.create(sessionOptions);
@@ -194,8 +205,8 @@ export async function POST(request: NextRequest) {
           bonusPoints: '0',  // 可以从plan中获取
           totalPoints: points.toString()  // 总积分
         },
-        // 不传递customer_email以避免"您已订阅我们的服务"错误
-        // customer_email: userData?.email || undefined,
+        // 传递当前登录用户的邮箱
+        customer_email: userEmail || undefined,
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
       });
