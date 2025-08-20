@@ -156,12 +156,12 @@ export async function POST(request: NextRequest) {
           planName: plan.name,
           points: points.toString(),
           billingPeriod: plan.duration_type,
-          userEmail: userData?.email || '' // 在metadata中保存邮箱，但不传给Stripe
+          userEmail: userData?.email || ''
         },
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
-        // 不传递customer_email以避免"您已订阅我们的服务"错误
-        // customer_email: userData?.email || undefined,
+        // 使用当前登录用户的邮箱
+        customer_email: userData?.email || undefined,
       };
       
       session = await stripe.checkout.sessions.create(sessionOptions);
@@ -194,8 +194,8 @@ export async function POST(request: NextRequest) {
           bonusPoints: '0',  // 可以从plan中获取
           totalPoints: points.toString()  // 总积分
         },
-        // 不传递customer_email以避免"您已订阅我们的服务"错误
-        // customer_email: userData?.email || undefined,
+        // 使用当前登录用户的邮箱
+        customer_email: userData?.email || undefined,
         allow_promotion_codes: true,
         billing_address_collection: 'auto',
       });
