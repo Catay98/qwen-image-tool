@@ -269,6 +269,7 @@ const resources = {
       'showcase.category': '分类',
       'showcase.style': '风格',
       'showcase.usePrompt': '使用此提示词',
+      'showcase.download': '下载图片',
       
       // 页脚
       'footer.product': '产品',

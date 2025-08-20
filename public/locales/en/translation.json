@@ -121,6 +121,13 @@
   "share": {
     "shareText": "Check out this amazing Qwen Image creation"
   },
+  "showcase": {
+    "details": "Creation Details",
+    "prompt": "Prompt",
+    "category": "Category",
+    "style": "Style",
+    "download": "Download Image"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
