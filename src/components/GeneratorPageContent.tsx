@@ -1,17 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import NavBar from "@/components/NavBar";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useSubscription } from "@/hooks/useSubscription";
 import { addWatermark } from "@/lib/watermark";
-import SubscriptionModal from "@/components/SubscriptionModal";
-import ShareModal from "@/components/ShareModal";
-import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+// 动态导入模态框组件
+const SubscriptionModal = dynamic(() => import("@/components/SubscriptionModal"));
+const ShareModal = dynamic(() => import("@/components/ShareModal"));
+const Footer = dynamic(() => import("@/components/Footer"));
 
 interface HistoryItem {
   id: string;

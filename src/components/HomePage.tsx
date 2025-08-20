@@ -1,14 +1,25 @@
 "use client";
 
+import dynamic from 'next/dynamic';
 import NavBar from "@/components/NavBar";
 import HeroSection from "@/components/HeroSection";
-import FeaturesSection from "@/components/FeaturesSection";
-import ShowcaseGallery from "@/components/ShowcaseGallery";
-import Footer from "@/components/Footer";
 import TranslationWrapper from "@/components/TranslationWrapper";
 import DisclaimerModal from "@/components/DisclaimerModal";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Suspense } from "react";
+
+// 动态导入重量级组件
+const FeaturesSection = dynamic(() => import("@/components/FeaturesSection"), {
+  loading: () => <div className="h-96 flex items-center justify-center">Loading...</div>,
+});
+
+const ShowcaseGallery = dynamic(() => import("@/components/ShowcaseGallery"), {
+  loading: () => <div className="h-96 flex items-center justify-center">Loading...</div>,
+  ssr: false, // 禁用服务端渲染以提高首屏速度
+});
+
+const Footer = dynamic(() => import("@/components/Footer"));
 
 export default function HomePage() {
   const { t, i18n } = useTranslation();
